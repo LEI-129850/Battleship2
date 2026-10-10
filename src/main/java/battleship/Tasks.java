@@ -53,6 +53,7 @@ public class Tasks {
 
 		IFleet myFleet = null;
 		IGame game = null;
+		ClockWindow display = null;
 		Duration timeBank = Game.DEFAULT_TIME_BANK;
 		menuHelp();
 
@@ -72,6 +73,7 @@ public class Tasks {
 					game = new Game(myFleet, timeBank);
 					game.printMyBoard(false, true);
 					System.out.println("Partida iniciada! Tempo de jogo: " + GameClock.format(timeBank));
+					display = startDisplay(game, display);
 					break;
 				case LEFROTA:
 					if (game != null)
@@ -80,6 +82,7 @@ public class Tasks {
 					game = new Game(myFleet, timeBank);
 					game.printMyBoard(false, true);
 					System.out.println("Partida iniciada! Tempo de jogo: " + GameClock.format(timeBank));
+					display = startDisplay(game, display);
 					break;
 				case STATUS:
 					if (myFleet != null)
@@ -114,6 +117,8 @@ public class Tasks {
 
 						if (game.getRemainingShips() == 0) {
 							game.stopClock();
+							if (display != null)
+								display.close();
 							game.over();
 							System.exit(0);
 						}
@@ -126,6 +131,10 @@ public class Tasks {
 							break;
 						}
 						game.stopClock();   // a simulação não usa o limite de tempo
+						if (display != null) {
+							display.close();
+							display = null;
+						}
 						while (game.getRemainingShips() > 0){
 							game.randomEnemyFire();
 							myFleet.printStatus();
@@ -158,6 +167,8 @@ public class Tasks {
 		}
 		if (game != null)
 			game.stopClock();
+		if (display != null)
+			display.close();
 		System.out.println(GOODBYE_MESSAGE);
 	}
 
@@ -178,6 +189,22 @@ public class Tasks {
 		System.out.println("- " + TIROS + ": Lista os tiros válidos realizados (* = tiro em navio, o = tiro na água)");
 		System.out.println("- " + DESISTIR + ": Encerra o jogo.");
 		System.out.println("===============================================================");
+	}
+
+	/**
+	 * Fecha a janela do tempo anterior (se existir) e abre uma nova para o jogo atual.
+	 *
+	 * @param game The current game
+	 * @param old  The previous window, or null
+	 * @return The new window
+	 */
+	private static ClockWindow startDisplay(IGame game, ClockWindow old) {
+		if (old != null)
+			old.close();
+		ClockWindow display = new ClockWindow(game);
+		if (!display.isSupported())
+			System.out.println("(Sem ambiente gráfico: usa o comando relogio)");
+		return display;
 	}
 
 	/**
@@ -219,7 +246,7 @@ public class Tasks {
 		System.out.println("Relógio em direto (prime Enter para sair)");
 
 		ScheduledExecutorService ticker = Executors.newSingleThreadScheduledExecutor(r -> {
-			Thread t = new Thread(r, "clock-display");
+			Thread t = new Thread(r, "clock-live");
 			t.setDaemon(true);
 			return t;
 		});
