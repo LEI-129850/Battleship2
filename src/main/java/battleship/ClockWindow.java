@@ -10,15 +10,32 @@ import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 
 /**
- * Janelinha sempre visível com o tempo restante.
- * Atualiza-se várias vezes por segundo e não rouba o foco à consola.
+ * Janelinha sempre visível com o tempo restante da partida.
+ * <p>
+ * Atualiza-se várias vezes por segundo, fica sempre por cima das outras janelas
+ * e não rouba o foco à consola. O texto fica vermelho no último minuto e a
+ * janela indica "TEMPO ESGOTADO" quando o tempo acaba.
+ * <p>
+ * Toda a interface é criada e atualizada na thread de eventos do Swing.
+ * Se não houver ambiente gráfico (modo headless), a janela não é criada.
  */
 public class ClockWindow implements AutoCloseable {
 
+    /** A janela; só é criada depois de a thread do Swing correr o código de arranque. */
     private volatile JFrame frame;
+
+    /** Temporizador do Swing que atualiza o texto da janela. */
     private volatile Timer timer;
+
+    /** False se o ambiente é headless (sem ecrã) e por isso a janela não existe. */
     private final boolean supported;
 
+    /**
+     * Cria e mostra a janela do relógio para o jogo indicado.
+     * Não bloqueia: a criação da janela é agendada na thread do Swing.
+     *
+     * @param game o jogo cujo tempo restante é mostrado
+     */
     public ClockWindow(IGame game) {
         this.supported = !GraphicsEnvironment.isHeadless();
         if (!supported)
@@ -58,11 +75,18 @@ public class ClockWindow implements AutoCloseable {
         });
     }
 
-    /** False se não há ambiente gráfico (ex: servidor sem ecrã). */
+    /**
+     * Indica se a janela pode ser mostrada.
+     *
+     * @return false se não há ambiente gráfico (ex: servidor sem ecrã)
+     */
     public boolean isSupported() {
         return supported;
     }
 
+    /**
+     * Para a atualização e fecha a janela. Pode ser chamado a partir de qualquer thread.
+     */
     @Override
     public void close() {
         SwingUtilities.invokeLater(() -> {

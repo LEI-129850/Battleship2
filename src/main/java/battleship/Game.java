@@ -151,7 +151,10 @@ public class Game implements IGame
 	public static final int BOARD_SIZE = 10;
 	public static final int NUMBER_SHOTS = 3;
 
-	/** Tempo de jogo por omissão. */
+	/**
+	 * Tempo de jogo por omissão (15 minutos), usado quando o jogador não escolhe
+	 * outro valor com o comando {@code tempo}.
+	 */
 	public static final Duration DEFAULT_TIME_BANK = Duration.ofMinutes(15);
 
 	private static final char EMPTY_MARKER = '.';
@@ -173,15 +176,32 @@ public class Game implements IGame
 	private Integer countSinks;
 	private int moveNumber;
 
+	/** Relógio de jogo: conta o tempo a partir do momento em que a partida é criada. */
 	private final GameClock clock;
+
+	/** True quando o tempo esgotou; a partir daí não são aceites mais jogadas. */
 	private volatile boolean timeUp;
 
 	//------------------------------------------------------------------
+
+	/**
+	 * Cria um jogo com o tempo de jogo por omissão ({@link #DEFAULT_TIME_BANK}).
+	 *
+	 * @param myFleet a frota do jogador
+	 */
 	public Game(IFleet myFleet)
 	{
 		this(myFleet, DEFAULT_TIME_BANK);
 	}
 
+	/**
+	 * Cria um jogo com um tempo de jogo à escolha. O relógio começa a contar
+	 * imediatamente e, quando chega a zero, o jogador perde automaticamente.
+	 *
+	 * @param myFleet  a frota do jogador
+	 * @param timeBank o tempo total da partida; tem de ser positivo
+	 * @throws IllegalArgumentException se o tempo não for positivo
+	 */
 	public Game(IFleet myFleet, Duration timeBank)
 	{
 		this.moveNumber = 1;
@@ -347,12 +367,14 @@ public class Game implements IGame
 	 *              The size of the list must be equal to {@code NUMBER_SHOTS}.
 	 * @throws IllegalArgumentException if the list of shots is null, contains an invalid
 	 *                                  number of positions, or includes duplicate positions.
-	 * @throws IllegalStateException    if the time ran out.
+	 * @throws IllegalStateException    se o tempo de jogo esgotou: com o tempo a zero
+	 *                                  já não é possível fazer mais jogadas.
 	 */
 	public void fireShots(List<IPosition> shots)
 	{
 		assert shots != null;
 
+		// Com o tempo esgotado, já não é possível fazer mais jogadas
 		if (isFinished())
 			throw new IllegalStateException("Tempo esgotado: já não é possível fazer jogadas.");
 
@@ -477,30 +499,55 @@ public class Game implements IGame
 	//------------------------------------------------------------------
 	// Relógio de jogo
 
+	/**
+	 * Devolve o tempo de jogo que ainda resta.
+	 *
+	 * @return o tempo restante, nunca negativo
+	 */
 	@Override
 	public Duration getRemainingTime()
 	{
 		return clock.remaining();
 	}
 
+	/**
+	 * Devolve o tempo restante num texto pronto a mostrar,
+	 * por exemplo {@code "Tempo restante: 09:41"}.
+	 *
+	 * @return o texto com o estado do relógio
+	 */
 	@Override
 	public String clockStatus()
 	{
 		return "Tempo restante: " + GameClock.format(clock.remaining());
 	}
 
+	/**
+	 * Pára o relógio de jogo sem o dar como esgotado.
+	 */
 	@Override
 	public void stopClock()
 	{
 		clock.stop();
 	}
 
+	/**
+	 * Indica se o tempo esgotou. Quando é true, o jogador perdeu e
+	 * {@link #fireShots(List)} recusa novas jogadas.
+	 *
+	 * @return true se o tempo chegou a zero
+	 */
 	@Override
 	public boolean isFinished()
 	{
 		return timeUp;
 	}
 
+	/**
+	 * Chamado pelo relógio quando o tempo chega a zero: marca o jogo como
+	 * terminado por tempo e avisa o jogador na consola.
+	 * É executado na thread do relógio, por isso {@code timeUp} é volátil.
+	 */
 	private void onTimeout()
 	{
 		timeUp = true;
