@@ -1,8 +1,9 @@
 /**
- * 
+ *
  */
 package battleship;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Scanner;
 
@@ -30,6 +31,7 @@ public interface IGame
 	 * Fires a set of shots in a given move.
 	 *
 	 * @param shots the positions where the shots are fired
+	 * @throws IllegalStateException se o tempo de jogo esgotou ({@link #isFinished()})
 	 */
 	void fireShots(List<IPosition> shots);
 
@@ -120,4 +122,36 @@ public interface IGame
 	void printAlienBoard(boolean show_shots, boolean show_legend);
 
 	void over();
+
+	/**
+	 * Devolve o tempo de jogo que ainda resta.
+	 * O relógio começa a contar quando o jogo é criado.
+	 *
+	 * @return o tempo restante, nunca negativo ({@link Duration#ZERO} quando o tempo acabou)
+	 */
+	Duration getRemainingTime();
+
+	/**
+	 * Devolve um texto pronto a mostrar com o tempo restante, no formato
+	 * {@code "Tempo restante: mm:ss"}, por exemplo {@code "Tempo restante: 09:41"}.
+	 *
+	 * @return o texto com o estado do relógio
+	 */
+	String clockStatus();
+
+	/**
+	 * Pára o relógio de jogo sem o dar como esgotado.
+	 * Deve ser chamado quando a partida termina por outro motivo, quando é criada
+	 * uma nova partida ou quando se corre a simulação, para não ficar nenhuma
+	 * thread agendada nem aparecer um falso "tempo esgotado".
+	 */
+	void stopClock();
+
+	/**
+	 * Indica se o jogo terminou porque o tempo esgotou. Quando é true, já não é
+	 * possível fazer jogadas e o jogador perdeu a partida.
+	 *
+	 * @return true se o tempo chegou a zero
+	 */
+	boolean isFinished();
 }
