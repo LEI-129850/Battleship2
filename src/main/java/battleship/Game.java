@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+import java.time.Duration;
 import java.util.*;
 
 public class Game implements IGame
@@ -170,7 +171,13 @@ public class Game implements IGame
 	private int moveNumber;
 
 	//------------------------------------------------------------------
-	public Game(IFleet myFleet)
+	public static final Duration DEFAULT_TIME_BANK = Duration.ofMinutes(10);
+	private final GameClock clock;
+	private volatile boolean timeUp;
+
+	//------------------------------------------------------------------
+
+	public Game(IFleet myFleet, Duration timeBank)
 	{
 		this.moveNumber = 1;
 
@@ -184,6 +191,9 @@ public class Game implements IGame
 		this.countRepeatedShots = 0;
 		this.countHits = 0;
 		this.countSinks = 0;
+
+		this.clock = new GameClock(timeBank, this::onTimeout);
+		this.clock.start();
 	}
 
 	@Override
@@ -333,6 +343,8 @@ public class Game implements IGame
 	 */
 	public void fireShots(List<IPosition> shots)
 	{
+		if (isFinished())
+			throw new IllegalStateException("Tempo esgotado");
 		assert shots != null;
 
 		List<ShotResult> shotResults = new ArrayList<ShotResult>();
@@ -451,5 +463,26 @@ public class Game implements IGame
 			System.out.println("+--------------------------------------------------------------+");
 			System.out.println("| Maldito sejas, Java Sparrow, eu voltarei, glub glub glub ... |");
 			System.out.println("+--------------------------------------------------------------+");
+	}
+	@Override
+	public String clockStatus(){
+		return "Tempo restante: " + GameClock.format(clock.remaining());
+	}
+	@Override
+	public void stopClock(){
+		clock.stop();
+	}
+
+	@Override
+	public boolean isFinished(){
+		return timeUp;
+	}
+
+	private void onTimeout(){
+		timeUp = true;
+		System.out.println();
+		System.out.println("*** TEMPO ESGOTADO! ***");
+		System.out.println("Já não é possível fazer mais jogadas. Usa gerafrota/lefrota para nova partida.");
+		System.out.print("> ");
 	}
 }
