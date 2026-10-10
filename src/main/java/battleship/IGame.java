@@ -1,11 +1,11 @@
 /**
- * 
+ *
  */
 package battleship;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Scanner;
-import java.time.Duration;
 
 /**
  * The interface Game.
@@ -31,6 +31,7 @@ public interface IGame
 	 * Fires a set of shots in a given move.
 	 *
 	 * @param shots the positions where the shots are fired
+	 * @throws IllegalStateException if the time ran out
 	 */
 	void fireShots(List<IPosition> shots);
 
@@ -122,11 +123,29 @@ public interface IGame
 
 	void over();
 
+	/**
+	 * Gets the remaining game time.
+	 *
+	 * @return the remaining time (Duration.ZERO when time is up)
+	 */
+	Duration getRemainingTime();
+
+	/**
+	 * Gets a printable text with the remaining time, e.g. "Tempo restante: 09:41".
+	 *
+	 * @return the clock status text
+	 */
 	String clockStatus();
 
+	/**
+	 * Stops the game clock (new game, simulation, game over).
+	 */
 	void stopClock();
 
+	/**
+	 * Tells if the game ended because the time ran out.
+	 *
+	 * @return true if the time is up
+	 */
 	boolean isFinished();
-
-	Duration getRemainingTime();
 }

@@ -23,7 +23,7 @@ public class GameClock {
 
     public GameClock(Duration bank, Runnable onTimeout) {
         if (bank == null || bank.isZero() || bank.isNegative())
-            throw new IllegalArgumentException("O de tempo tem de ser um valor positivo");
+            throw new IllegalArgumentException("O banco de tempo tem de ser positivo");
         this.bank = bank;
         this.onTimeout = onTimeout;
     }
@@ -46,7 +46,9 @@ public class GameClock {
         return left.isNegative() ? Duration.ZERO : left;
     }
 
-    public synchronized boolean isOver() { return over; }
+    public synchronized boolean isOver() {
+        return over;
+    }
 
     public static String format(Duration d) {
         long secs = (d.toMillis() + 999) / 1000;
@@ -60,6 +62,6 @@ public class GameClock {
             over = true;
             scheduler.shutdown();
         }
-        onTimeout.run();
+        onTimeout.run();   // fora do lock, para evitar deadlocks
     }
 }

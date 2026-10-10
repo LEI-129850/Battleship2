@@ -151,6 +151,9 @@ public class Game implements IGame
 	public static final int BOARD_SIZE = 10;
 	public static final int NUMBER_SHOTS = 3;
 
+	/** Tempo de jogo por omissão. */
+	public static final Duration DEFAULT_TIME_BANK = Duration.ofMinutes(15);
+
 	private static final char EMPTY_MARKER = '.';
 	private static final char SHIP_MARKER = '#';
 	private static final char SHOT_SHIP_MARKER = '*';
@@ -170,12 +173,14 @@ public class Game implements IGame
 	private Integer countSinks;
 	private int moveNumber;
 
-	//------------------------------------------------------------------
-	public static final Duration DEFAULT_TIME_BANK = Duration.ofMinutes(10);
 	private final GameClock clock;
 	private volatile boolean timeUp;
 
 	//------------------------------------------------------------------
+	public Game(IFleet myFleet)
+	{
+		this(myFleet, DEFAULT_TIME_BANK);
+	}
 
 	public Game(IFleet myFleet, Duration timeBank)
 	{
@@ -192,6 +197,8 @@ public class Game implements IGame
 		this.countHits = 0;
 		this.countSinks = 0;
 
+		// O relógio começa a contar assim que a partida é criada
+		this.timeUp = false;
 		this.clock = new GameClock(timeBank, this::onTimeout);
 		this.clock.start();
 	}
@@ -340,12 +347,14 @@ public class Game implements IGame
 	 *              The size of the list must be equal to {@code NUMBER_SHOTS}.
 	 * @throws IllegalArgumentException if the list of shots is null, contains an invalid
 	 *                                  number of positions, or includes duplicate positions.
+	 * @throws IllegalStateException    if the time ran out.
 	 */
 	public void fireShots(List<IPosition> shots)
 	{
-		if (isFinished())
-			throw new IllegalStateException("Tempo esgotado");
 		assert shots != null;
+
+		if (isFinished())
+			throw new IllegalStateException("Tempo esgotado: já não é possível fazer jogadas.");
 
 		List<ShotResult> shotResults = new ArrayList<ShotResult>();
 		if (shots.size() != NUMBER_SHOTS) {
@@ -459,35 +468,45 @@ public class Game implements IGame
 	}
 
 	public void over() {
-			System.out.println();
-			System.out.println("+--------------------------------------------------------------+");
-			System.out.println("| Maldito sejas, Java Sparrow, eu voltarei, glub glub glub ... |");
-			System.out.println("+--------------------------------------------------------------+");
+		System.out.println();
+		System.out.println("+--------------------------------------------------------------+");
+		System.out.println("| Maldito sejas, Java Sparrow, eu voltarei, glub glub glub ... |");
+		System.out.println("+--------------------------------------------------------------+");
 	}
+
+	//------------------------------------------------------------------
+	// Relógio de jogo
+
 	@Override
-	public String clockStatus(){
+	public Duration getRemainingTime()
+	{
+		return clock.remaining();
+	}
+
+	@Override
+	public String clockStatus()
+	{
 		return "Tempo restante: " + GameClock.format(clock.remaining());
 	}
+
 	@Override
-	public void stopClock(){
+	public void stopClock()
+	{
 		clock.stop();
 	}
 
 	@Override
-	public boolean isFinished(){
+	public boolean isFinished()
+	{
 		return timeUp;
 	}
 
-	private void onTimeout(){
+	private void onTimeout()
+	{
 		timeUp = true;
 		System.out.println();
-		System.out.println("*** TEMPO ESGOTADO! ***");
+		System.out.println("*** TEMPO ESGOTADO! Perdeste a partida. ***");
 		System.out.println("Já não é possível fazer mais jogadas. Usa gerafrota/lefrota para nova partida.");
 		System.out.print("> ");
-	}
-
-	@Override
-	public Duration getRemainingTime() {
-		return clock.remaining();
 	}
 }

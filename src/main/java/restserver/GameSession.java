@@ -111,6 +111,9 @@ public class GameSession {
 		game.stopClock();
 	}
 
+	// ── Internals ────────────────────────────────────────────────────────────
+
+	/** Se o relógio chegou a zero, o estudante perde automaticamente. */
 	private void checkTimeout() {
 		if (!gameOver && game.isFinished()) {
 			this.gameOver = true;
