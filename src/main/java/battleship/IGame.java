@@ -5,6 +5,7 @@ package battleship;
 
 import java.util.List;
 import java.util.Scanner;
+import java.time.Duration;
 
 /**
  * The interface Game.
@@ -126,4 +127,6 @@ public interface IGame
 	void stopClock();
 
 	boolean isFinished();
+
+	Duration getRemainingTime();
 }

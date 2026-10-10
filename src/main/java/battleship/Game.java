@@ -485,4 +485,9 @@ public class Game implements IGame
 		System.out.println("Já não é possível fazer mais jogadas. Usa gerafrota/lefrota para nova partida.");
 		System.out.print("> ");
 	}
+
+	@Override
+	public Duration getRemainingTime() {
+		return clock.remaining();
+	}
 }
