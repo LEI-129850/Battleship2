@@ -32,6 +32,7 @@ public class Tasks {
 	private static final String MAPA = "mapa";
 	private static final String STATUS = "estado";
 	private static final String SIMULA = "simula";
+	private static final String HISTORICO = "historico";
 
 	/**
 	 * This task also tests the fighting element of a round of three shots
@@ -40,6 +41,7 @@ public class Tasks {
 
 		IFleet myFleet = null;
 		IGame game = null;
+		ScoreboardManager scoreboardManager = new ScoreboardManager();
 		menuHelp();
 
 		System.out.print("> ");
@@ -74,6 +76,8 @@ public class Tasks {
 
 						if (game.getRemainingShips() == 0) {
 							game.over();
+							int totalRajadas = game.getAlienMoves().size();
+							scoreboardManager.saveGame(totalRajadas, "Frota Afundada! (Rajada)");
 							System.exit(0);
 						}
 					}
@@ -93,6 +97,8 @@ public class Tasks {
 
 						if (game.getRemainingShips() == 0) {
 							game.over();
+							int totalTiros = game.getAlienMoves().size();
+							scoreboardManager.saveGame(totalTiros, "Frota Afundada! (Simulação)");
 							System.exit(0);
 						}
 					}
@@ -104,6 +110,9 @@ public class Tasks {
                 case AJUDA:
                     menuHelp();
                     break;
+				case HISTORICO:
+					scoreboardManager.printScoreboard();
+					break;
 				default:
 					System.out.println("Que comando é esse??? Repete ...");
 			}
@@ -127,6 +136,7 @@ public class Tasks {
 		System.out.println("- " + SIMULA + ": Simula um jogo completo.");
 		System.out.println("- " + TIROS + ": Lista os tiros válidos realizados (* = tiro em navio, o = tiro na água)");
 		System.out.println("- " + DESISTIR + ": Encerra o jogo.");
+		System.out.println("- " + HISTORICO + ": Mostra o Histórico das ultimas 10 partidas jogadas.");
 		System.out.println("===============================================================");
 	}
 	/**
