@@ -3,7 +3,8 @@ package battleship;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-
+import static org.fusesource.jansi.Ansi.*;
+import static org.fusesource.jansi.Ansi.Color.*;
 import java.util.*;
 
 public class Game implements IGame
@@ -168,6 +169,7 @@ public class Game implements IGame
 	private Integer countHits;
 	private Integer countSinks;
 	private int moveNumber;
+	private boolean radarUsado = false;
 
 	//------------------------------------------------------------------
 	public Game(IFleet myFleet)
@@ -451,5 +453,24 @@ public class Game implements IGame
 			System.out.println("+--------------------------------------------------------------+");
 			System.out.println("| Maldito sejas, Java Sparrow, eu voltarei, glub glub glub ... |");
 			System.out.println("+--------------------------------------------------------------+");
+	}
+
+	@Override
+	public int radar(IPosition atual){
+		if (radarUsado)
+			return -1;
+		radarUsado = true;
+		List<IShip> navios = new ArrayList<>();
+		for (int direcaox = -1; direcaox <= 1; direcaox++) {
+			for (int direcaoy = -1; direcaoy <= 1; direcaoy++) {
+				IPosition p = new Position(atual.getRow() + direcaox, atual.getColumn() + direcaoy);
+				if (!p.isInside())
+					continue;
+				IShip ship = myFleet.shipAt(p);
+				if (ship != null)
+					navios.add(ship);
+			}
+		}
+		return navios.size();
 	}
 }
