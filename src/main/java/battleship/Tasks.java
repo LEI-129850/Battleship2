@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
  * The type Tasks.
  */
 public class Tasks {
-  
+
     /**
      * The constant LOGGER.
      */
@@ -39,6 +39,7 @@ public class Tasks {
     private static final String STATUS = "estado";
     private static final String SIMULA = "simula";
     private static final String RADAR = "radar";
+    private static final String HISTORICO = "historico";
 
     /**
      * Comando para escolher o tempo de jogo antes da partida.
@@ -64,6 +65,7 @@ public class Tasks {
         IGame game = null;
         ClockWindow display = null;
         Duration timeBank = Game.DEFAULT_TIME_BANK;
+        ScoreboardManager scoreboardManager = new ScoreboardManager();
 
         menuHelp();
 
@@ -144,6 +146,8 @@ public class Tasks {
                             if (display != null)
                                 display.close();
                             game.over();
+                            int totalRajadas = game.getAlienMoves().size();
+                            scoreboardManager.saveGame(totalRajadas, "Frota Afundada! (Rajada)");
                             System.exit(0);
                         }
                     }
@@ -177,6 +181,8 @@ public class Tasks {
 
                         if (game.getRemainingShips() == 0) {
                             game.over();
+                            int totalTiros = game.getAlienMoves().size();
+                            scoreboardManager.saveGame(totalTiros, "Frota Afundada! (Simulação)");
                             System.exit(0);
                         }
                     }
@@ -245,6 +251,10 @@ public class Tasks {
                     }
                     break;
 
+                case HISTORICO:
+                    scoreboardManager.printScoreboard();
+                    break;
+
                 case AJUDA:
                     menuHelp();
                     break;
@@ -290,11 +300,13 @@ public class Tasks {
         System.out.println("- " + RAJADA
                 + ": Realiza uma rajada de disparos.");
         System.out.println("- " + SIMULA
-                + ": Simula um jogo completo (sem limite de tempo).");
+                + ": Simula um jogo completo.");
         System.out.println("- " + RADAR
                 + ": Usar a habilidade radar, 1 uso por jogo.");
         System.out.println("- " + TIROS
                 + ": Lista os tiros válidos realizados (* = tiro em navio, o = tiro na água)");
+        System.out.println("- " + HISTORICO
+                + ": Mostra o Histórico das ultimas 10 partidas jogadas.");
         System.out.println("- " + DESISTIR
                 + ": Encerra o jogo.");
         System.out.println(
@@ -503,5 +515,4 @@ public class Tasks {
                     "Formato inválido. Use 'A3', 'A 3' ou similar.");
         }
     }
-
 }
