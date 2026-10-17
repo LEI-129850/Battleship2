@@ -32,6 +32,7 @@ public class Tasks {
 	private static final String MAPA = "mapa";
 	private static final String STATUS = "estado";
 	private static final String SIMULA = "simula";
+	private static final String AISIMULA = "aisimula";
 
 	/**
 	 * This task also tests the fighting element of a round of three shots
@@ -104,6 +105,22 @@ public class Tasks {
                 case AJUDA:
                     menuHelp();
                     break;
+
+				case AISIMULA:
+					System.out.print("API key Gemini: ");
+					String apiKey = in.next();
+
+					myFleet = Fleet.createRandom();
+					game = new Game(myFleet);
+
+					try {
+						AI.simula(game, apiKey);
+					} catch (Exception e) {
+						System.out.println(
+								"Não foi possível continuar a simulação com o Gemini.");
+					}
+					break;
+
 				default:
 					System.out.println("Que comando é esse??? Repete ...");
 			}
@@ -125,8 +142,10 @@ public class Tasks {
 		System.out.println("- " + MAPA + ": Exibe o mapa da frota.");
 		System.out.println("- " + RAJADA + ": Realiza uma rajada de disparos.");
 		System.out.println("- " + SIMULA + ": Simula um jogo completo.");
+		System.out.println("- " + AISIMULA + ": Simula um jogo completo utilizando AI( adiciona aqui API key do gemini).");
 		System.out.println("- " + TIROS + ": Lista os tiros válidos realizados (* = tiro em navio, o = tiro na água)");
 		System.out.println("- " + DESISTIR + ": Encerra o jogo.");
+
 		System.out.println("===============================================================");
 	}
 	/**
