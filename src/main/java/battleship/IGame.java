@@ -154,4 +154,7 @@ public interface IGame
 	 * @return true se o tempo chegou a zero
 	 */
 	boolean isFinished();
+  
+  int radar(IPosition atual);
 }
+	

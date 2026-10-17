@@ -77,6 +77,7 @@
 	</properties>
 
 	<dependencies>
+
 		<!-- Spring Boot REST server (includes Jackson, embedded Tomcat) -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -84,11 +85,18 @@
 			<version>3.2.4</version>
 		</dependency>
 
-        <!-- Source: https://mvnrepository.com/artifact/com.google.guava/guava -->
-        <dependency>
+    <!-- Source: https://mvnrepository.com/artifact/com.google.guava/guava -->
+    <dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
 			<version>33.4.8-jre</version>
+    </dependency>
+    
+		<!-- Formatação de cores e texto na consola (ANSI / Jansi) -->
+		<dependency>
+			<groupId>org.fusesource.jansi</groupId>
+			<artifactId>jansi</artifactId>
+			<version>2.4.1</version>
 		</dependency>
 
 		<!-- JUnit Jupiter API -->

@@ -3,8 +3,9 @@ package battleship;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-
 import java.time.Duration;
+import static org.fusesource.jansi.Ansi.*;
+import static org.fusesource.jansi.Ansi.Color.*;
 import java.util.*;
 
 public class Game implements IGame
@@ -175,6 +176,7 @@ public class Game implements IGame
 	private Integer countHits;
 	private Integer countSinks;
 	private int moveNumber;
+	private boolean radarUsado = false;
 
 	/** Relógio de jogo: conta o tempo a partir do momento em que a partida é criada. */
 	private final GameClock clock;
@@ -555,5 +557,24 @@ public class Game implements IGame
 		System.out.println("*** TEMPO ESGOTADO! Perdeste a partida. ***");
 		System.out.println("Já não é possível fazer mais jogadas. Usa gerafrota/lefrota para nova partida.");
 		System.out.print("> ");
+	}
+
+	@Override
+	public int radar(IPosition atual){
+		if (radarUsado)
+			return -1;
+		radarUsado = true;
+		List<IShip> navios = new ArrayList<>();
+		for (int direcaox = -1; direcaox <= 1; direcaox++) {
+			for (int direcaoy = -1; direcaoy <= 1; direcaoy++) {
+				IPosition p = new Position(atual.getRow() + direcaox, atual.getColumn() + direcaoy);
+				if (!p.isInside())
+					continue;
+				IShip ship = myFleet.shipAt(p);
+				if (ship != null)
+					navios.add(ship);
+			}
+		}
+		return navios.size();
 	}
 }
