@@ -154,7 +154,15 @@ public interface IGame
 	 * @return true se o tempo chegou a zero
 	 */
 	boolean isFinished();
-  
+	/**
+	 * Utiliza a habilidade de radar centrada numa posição específica,
+	 * detetando navios na zona circundante.
+	 * Esta habilidade é limitada a uma utilização por jogo.
+	 *
+	 * @param atual A posição central onde o radar é aplicado.
+	 * @return O número de navios encontrados na área circundante,
+	 *         ou {@code -1} se o radar já tiver sido utilizado anteriormente.
+	 */
   int radar(IPosition atual);
 }
 	
