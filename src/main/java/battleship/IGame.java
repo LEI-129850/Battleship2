@@ -120,4 +120,5 @@ public interface IGame
 	void printAlienBoard(boolean show_shots, boolean show_legend);
 
 	void over();
-}
+
+	int radar(IPosition atual);}

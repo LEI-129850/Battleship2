@@ -1,6 +1,8 @@
 package battleship;
 
 import java.util.Scanner;
+import static org.fusesource.jansi.Ansi.*;
+import static org.fusesource.jansi.Ansi.Color.*;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -32,6 +34,7 @@ public class Tasks {
 	private static final String MAPA = "mapa";
 	private static final String STATUS = "estado";
 	private static final String SIMULA = "simula";
+	private static final String RADAR = "radar";
 
 	/**
 	 * This task also tests the fighting element of a round of three shots
@@ -104,6 +107,40 @@ public class Tasks {
                 case AJUDA:
                     menuHelp();
                     break;
+				case RADAR:
+					String resto = in.nextLine().trim();//ler a linha toda
+
+					if (game == null) {
+						System.out.println("Primeiro cria uma frota (gerafrota ou lefrota).");
+						break;
+					}
+					if (resto.isEmpty()) {
+						System.out.println("Indica a posição, por exemplo: radar C5");
+						break;
+					}
+					try {
+						IPosition pos = readClassicPosition(new Scanner(resto));
+						if (!pos.isInside()) {
+							System.out.println("Essa posição está fora do tabuleiro.");
+							break;
+						}
+
+						int encontrados = game.radar(pos);//posiçoes
+
+						//biblioteca
+						if (encontrados == -1) {
+							System.out.println(ansi().fg(RED).a("[ERRO] Já usaste o radar neste jogo.").reset());
+						} else if (encontrados == 0) {
+							System.out.println(ansi().fg(BLUE).a("[RADAR] Zona limpa em " + pos + "! Nenhum navio detetado.").reset());
+						} else {
+							System.out.println(ansi().fg(GREEN).a("[RADAR] Radar utilizado:" + encontrados + " navio(s) na zona à volta de:" + pos).reset());
+						}
+
+					} catch (IllegalArgumentException e) {
+						System.out.println(e.getMessage());
+					}
+					break;
+
 				default:
 					System.out.println("Que comando é esse??? Repete ...");
 			}
@@ -125,6 +162,7 @@ public class Tasks {
 		System.out.println("- " + MAPA + ": Exibe o mapa da frota.");
 		System.out.println("- " + RAJADA + ": Realiza uma rajada de disparos.");
 		System.out.println("- " + SIMULA + ": Simula um jogo completo.");
+		System.out.println("- " + RADAR + ": Usar a habilidade radar, 1 uso por jogo.");
 		System.out.println("- " + TIROS + ": Lista os tiros válidos realizados (* = tiro em navio, o = tiro na água)");
 		System.out.println("- " + DESISTIR + ": Encerra o jogo.");
 		System.out.println("===============================================================");
