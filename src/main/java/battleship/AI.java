@@ -280,12 +280,13 @@ public class AI {
      *
      * @param game O jogo que contem a frota contra a qual o Gemini vai jogar
      * @param apiKey A chave utilizada para aceder a API do Gemini
+     * @param scoreboardManager O gestor de pontuações utilizado para registar o resultado da simulação
      * @throws IOException Se ocorrer um erro ao processar o JSON, se nao for
      *                     possivel contactar a API ou se a simulacao for interrompida
      */
     public static void simula(IGame game, String apiKey, ScoreboardManager scoreboardManager) throws IOException {
         try (Client client = Client.builder().apiKey(apiKey).build()) {
-            Chat chat = client.chats.create("antigravity-preview-09-2026");
+            Chat chat = client.chats.create("gemini-3.5-flash-lite");
             ObjectMapper mapper = new ObjectMapper();
 
             // Memória local da partida.
