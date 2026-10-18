@@ -559,6 +559,15 @@ public class Game implements IGame
 		System.out.print("> ");
 	}
 
+	/**
+	 * Ativa a habilidade especial de radar numa posição específica do tabuleiro,
+	 * verificando a zona circundante (numa área de 3x3 centrada na posição fornecida).
+	 * Cada jogo permite apenas uma única utilização desta habilidade.
+	 *
+	 * @param atual A posição central do tabuleiro onde o radar vai ser aplicado.
+	 * @return O número de navios detetados na zona circundante,
+	 *         ou {@code -1} caso o radar já tenha sido utilizado anteriormente neste jogo.
+	 */
 	@Override
 	public int radar(IPosition atual){
 		if (radarUsado)
