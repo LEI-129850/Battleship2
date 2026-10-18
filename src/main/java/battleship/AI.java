@@ -168,7 +168,7 @@ public class AI {
      */
     public static void simula(IGame game, String apiKey, ScoreboardManager scoreboardManager) throws IOException {
         try (Client client = Client.builder().apiKey(apiKey).build()) {
-            Chat chat = client.chats.create("antigravity-preview-09-2026");
+            Chat chat = client.chats.create("gemini-3.5-flash-lite");
             ObjectMapper mapper = new ObjectMapper();
 
             // Memória local da partida.
