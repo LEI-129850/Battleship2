@@ -92,7 +92,7 @@ public class AI {
      * @throws IOException Se ocorrer um erro ao processar o JSON, se nao for
      *                     possivel contactar a API ou se a simulacao for interrompida
      */
-    public static void simula(IGame game, String apiKey) throws IOException {
+    public static void simula(IGame game, String apiKey, ScoreboardManager scoreboardManager) throws IOException {
         try (Client client = Client.builder().apiKey(apiKey).build()) {
             Chat chat = client.chats.create("gemini-3.5-flash-lite");
             ObjectMapper mapper = new ObjectMapper();
@@ -207,6 +207,9 @@ public class AI {
 
             System.out.println(
                     "Fim da simulação: toda a frota foi afundada.");
+
+            game.over();
+            scoreboardManager.saveGame(game.getAlienMoves().size(), "Frota Afundada! (Simulação AI)");
 
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
