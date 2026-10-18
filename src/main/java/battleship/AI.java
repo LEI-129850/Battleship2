@@ -163,6 +163,7 @@ public class AI {
      *
      * @param game O jogo que contem a frota contra a qual o Gemini vai jogar
      * @param apiKey A chave utilizada para aceder a API do Gemini
+     * @param scoreboardManager O gestor de pontuações utilizado para registar o resultado da simulação
      * @throws IOException Se ocorrer um erro ao processar o JSON, se nao for
      *                     possivel contactar a API ou se a simulacao for interrompida
      */
