@@ -38,8 +38,10 @@ public class Tasks {
     private static final String MAPA = "mapa";
     private static final String STATUS = "estado";
     private static final String SIMULA = "simula";
+    private static final String AISIMULA = "aisimula";
     private static final String RADAR = "radar";
     private static final String HISTORICO = "historico";
+
 
     /**
      * Comando para escolher o tempo de jogo antes da partida.
@@ -259,6 +261,21 @@ public class Tasks {
                     menuHelp();
                     break;
 
+                case AISIMULA:
+                    System.out.print("API key Gemini: ");
+                    String apiKey = in.next();
+
+                    myFleet = Fleet.createRandom();
+                    game = new Game(myFleet);
+
+                    try {
+                        AI.simula(game, apiKey);
+                    } catch (Exception e) {
+                        System.out.println(
+                                "Não foi possível continuar a simulação com o Gemini.");
+                    }
+                    break;
+
                 default:
                     System.out.println(
                             "Que comando é esse??? Repete ...");
@@ -301,6 +318,8 @@ public class Tasks {
                 + ": Realiza uma rajada de disparos.");
         System.out.println("- " + SIMULA
                 + ": Simula um jogo completo.");
+        System.out.println("- " + AISIMULA
+                + ": Simula um jogo completo utilizando AI( adiciona aqui API key do gemini).");
         System.out.println("- " + RADAR
                 + ": Usar a habilidade radar, 1 uso por jogo.");
         System.out.println("- " + TIROS
