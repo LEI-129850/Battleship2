@@ -269,7 +269,7 @@ public class Tasks {
                     game = new Game(myFleet);
 
                     try {
-                        AI.simula(game, apiKey);
+                        AI.simula(game, apiKey, scoreboardManager);
                     } catch (Exception e) {
                         System.out.println(
                                 "Não foi possível continuar a simulação com o Gemini.");
