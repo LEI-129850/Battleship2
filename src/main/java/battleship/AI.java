@@ -43,6 +43,80 @@ public class AI {
             Escolhe os próximos 3 tiros exclusivamente dessa lista, sem repetir.
             Se restarem apenas 1 ou 2 posições disponíveis, dispara em todas
             essas posições e só depois completa a rajada com tiros repetidos.
+            
+            ---IMPORTANTE----
+            Abaixo encontra-se a estrategia de que utilizaras para jogar:
+            
+            ESTRATEGIA DE JOGO:
+            
+            1. REGISTO E CERTEZA
+            Usa o historico e a lista de posicoes ainda nao atiradas.
+            Distingue factos confirmados de hipoteses.
+            O resultado de uma rajada e agregado: se houver um acerto entre
+            tres tiros, nao sabes automaticamente qual das tres posicoes acertou.
+            
+            2. PROCURA
+            Enquanto nao houver uma zona promissora por investigar, procura
+            navios em zonas pouco exploradas.
+            Prefere rajadas com tres casas proximas, idealmente consecutivas
+            na mesma linha ou coluna, para localizar melhor a origem dos acertos.
+            Escolhe apenas casas ainda nao utilizadas.
+            Escolher tres casas proximas NAO e um objetivo por si so.
+            Nao percorras linhas ou colunas mecanicamente.
+            
+            Antes de escolher cada rajada, aplica estas prioridades:
+            1. Excluir posicoes ja utilizadas.
+            2. Excluir casas que os resultados anteriores permitam confirmar como agua.
+            3. Investigar navios atingidos que ainda nao foram afundados.
+            4. So depois procurar novos navios.
+            
+            Exemplo:
+            Se disparares em E1, E2 e E3 e o resultado indicar tres tiros validos,
+            zero tiros na agua e uma Nau afundada, sem acertos noutros navios,
+            essas tres casas pertencem a Nau.
+            As casas adjacentes, incluindo F1, F2 e F3, sao agua.
+            Nao desperdices a proxima rajada nessas casas.
+            
+            Se um grupo de tres casas consecutivas incluir posicoes ja utilizadas
+            ou confirmadas como agua, abandona esse padrao e escolhe outras casas.
+            
+            
+            Enquanto existirem navios maiores que uma Barca, da prioridade
+            a zonas onde esses navios ainda possam caber.
+            Nao uses exclusivamente um padrao de xadrez: as Barcas ocupam
+            apenas uma casa e podem estar nas casas ignoradas por esse padrao.
+            
+            3. PERSEGUICAO
+            Quando uma rajada indicar acertos sem afundar o navio, da prioridade
+            a investigar a zona dessa rajada.
+            Explora casas imediatamente a Norte, Sul, Este e Oeste das
+            possiveis posicoes atingidas.
+            Procura completar uma linha horizontal ou vertical para Caravelas,
+            Naus e Fragatas. Considera tambem a forma em T do Galeao.
+            Se existirem varias explicacoes possiveis, escolhe tiros que ajudem
+            a distinguir essas explicacoes, sem assumir uma delas como certa.
+            
+            4. INTERPRETACAO DOS RESULTADOS
+            Se os tres tiros forem validos e todos forem agua, as tres casas
+            ficam confirmadas como agua.
+            Se houver uma mistura de agua e acertos, conserva a incerteza
+            sobre o resultado de cada casa.
+            Se um navio afundar, nao assumas que os restantes acertos da
+            rajada pertencem necessariamente a esse mesmo navio.
+            
+            5. NAVIOS AFUNDADOS
+            So excluas as casas em redor de um navio afundado quando conseguires
+            determinar todas as suas posicoes com seguranca.
+            Nenhum outro navio pode tocar-lhe, nem na diagonal.
+            Nao excluas automaticamente diagonais de possiveis acertos:
+            essas casas podem pertencer ao proprio Galeao em T.
+            
+            6. FASE FINAL
+            Quando so restarem Barcas, procura nas casas ainda disponiveis
+            que nao estejam confirmadas como agua.
+            Nao continues a perseguir um navio que ja esta confirmado como afundado.
+            Se nao conseguires justificar uma escolha estrategica, escolhe
+            tres casas ainda nao utilizadas em vez de repetir tiros.
             """;
 
     /**
@@ -94,7 +168,7 @@ public class AI {
      */
     public static void simula(IGame game, String apiKey, ScoreboardManager scoreboardManager) throws IOException {
         try (Client client = Client.builder().apiKey(apiKey).build()) {
-            Chat chat = client.chats.create("gemini-3.5-flash-lite");
+            Chat chat = client.chats.create("antigravity-preview-09-2026");
             ObjectMapper mapper = new ObjectMapper();
 
             // Memória local da partida.
@@ -174,13 +248,24 @@ public class AI {
 
                     // A cada 10 rajadas, relembrar também as regras e o histórico.
                     if (numeroRajada % 10 == 0) {
+                        chat = client.chats.create("gemini-3.5-flash-lite");
+
                         pedido.put("regras", PROMPT);
+
                         pedido.set(
                                 "historico",
                                 mapper.valueToTree(historico));
+
                         pedido.set(
                                 "posicoesJaJogadas",
                                 mapper.valueToTree(posicoesJogadas));
+
+                        pedido.put("contexto", """
+            Esta e uma nova conversa para continuar uma partida ja iniciada.
+            O historico contem todas as rajadas executadas e os seus resultados.
+            Essas rajadas ja aconteceram: nao as executes novamente.
+            Usa as regras e o historico para escolher a proxima rajada.
+            """);
                     }
 
                     pedido.set(
