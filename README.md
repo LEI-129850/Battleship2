@@ -17,109 +17,225 @@
 
 [Feat 129850](https://github.com/LEI-129850/Battleship2/issues/1): [Link do video](https://www.youtube.com/watch?v=e50M9mJP2D0)
 
-## Pompt da AI
+## Prompt da AI
 
 [Video da interação do LLM com o Jogo](https://www.youtube.com/watch?v=M56ckFIpGNE)
 
-
     Vais jogar Batalha Naval contra uma frota secreta gerada pelo programa.
-    O tabuleiro tem linhas A-J e colunas 1-10. Existem 4 Barcas de 1 casa,
-    3 Caravelas de 2 casas, 2 Naus de 3 casas, 1 Fragata de 4 casas e
-    1 Galeao de 5 casas em T (corpo de 3 casas e duas asas numa extremidade).
-    Os navios retos podem ser horizontais ou verticais; o Galeao tem quatro
-    orientações. Os navios não se tocam, nem na diagonal.
+        O tabuleiro tem linhas A-J e colunas 1-10. Existem:
+        - 4 Barcas de 1 casa;
+        - 3 Caravelas de 2 casas;
+        - 2 Naus de 3 casas;
+        - 1 Fragata de 4 casas;
+        - 1 Galeao de 5 casas em T, com um corpo de 3 casas e duas asas
+          numa das extremidades.
 
-    Em cada resposta envia APENAS um array JSON com exatamente 3 tiros:
-    [{"row":"A","column":5},{"row":"C","column":10},{"row":"F","column":5}]
-    Não uses Markdown, explicações ou tabuleiros.
+        Os navios retos podem ser horizontais ou verticais.
+        O Galeao tem quatro orientacoes.
+        Os navios nao se tocam, nem na diagonal.
 
-    Receberás o resultado agregado da rajada, por exemplo:
-    {"validShots":3,"sunkBoats":[{"count":1,"type":"Barca"}],
-    "repeatedShots":0,"outsideShots":0,
-    "hitsOnBoats":[{"hits":1,"type":"Nau"}],"missedShots":1}
+        FORMATO DA RESPOSTA
 
-    Este resultado não identifica qual dos três tiros acertou em cada navio.
-    Usa o histórico para recordar os tiros e procurar navios junto de
-    possíveis acertos. Não dispares fora do tabuleiro.
+        Responde APENAS com um array JSON de exatamente 3 tiros:
+        [{"row":"A","column":5},{"row":"C","column":10},{"row":"F","column":5}]
 
-    Receberás também uma lista posicoesAindaNaoAtiradas.
-    Escolhe os próximos 3 tiros exclusivamente dessa lista, sem repetir.
-    Se restarem apenas 1 ou 2 posições disponíveis, dispara em todas
-    essas posições e só depois completa a rajada com tiros repetidos.
-    
-    ---IMPORTANTE----
-    Abaixo encontra-se a estrategia de que utilizaras para jogar:
-            
-    ESTRATEGIA DE JOGO:
-            
-    1. REGISTO E CERTEZA
-    Usa o historico e a lista de posicoes ainda nao atiradas.
-    Distingue factos confirmados de hipoteses.
-    O resultado de uma rajada e agregado: se houver um acerto entre
-    tres tiros, nao sabes automaticamente qual das tres posicoes acertou.
-            
-    2. PROCURA
-    Enquanto nao houver uma zona promissora por investigar, procura
-    navios em zonas pouco exploradas.
-    Prefere rajadas com tres casas proximas, idealmente consecutivas
-    na mesma linha ou coluna, para localizar melhor a origem dos acertos.
-    Escolhe apenas casas ainda nao utilizadas.
-    Escolher tres casas proximas NAO e um objetivo por si so.
-    Nao percorras linhas ou colunas mecanicamente.
+        Nao uses Markdown, explicacoes, comentarios ou tabuleiros.
+        Cada objeto deve conter apenas row e column.
+        row deve ser uma letra maiuscula entre A e J.
+        column deve ser um numero inteiro entre 1 e 10.
 
-    Antes de escolher cada rajada, aplica estas prioridades:
-    1. Excluir posicoes ja utilizadas.
-    2. Excluir casas que os resultados anteriores permitam confirmar como agua.
-    3. Investigar navios atingidos que ainda nao foram afundados.
-    4. So depois procurar novos navios.
-    
-    Exemplo:
-    Se disparares em E1, E2 e E3 e o resultado indicar tres tiros validos,
-    zero tiros na agua e uma Nau afundada, sem acertos noutros navios,
-    essas tres casas pertencem a Nau.
-    As casas adjacentes, incluindo F1, F2 e F3, sao agua.
-    Nao desperdices a proxima rajada nessas casas.
-    
-    Se um grupo de tres casas consecutivas incluir posicoes ja utilizadas
-    ou confirmadas como agua, abandona esse padrao e escolhe outras casas.
-            
-            
-    Enquanto existirem navios maiores que uma Barca, da prioridade
-    a zonas onde esses navios ainda possam caber.
-    Nao uses exclusivamente um padrao de xadrez: as Barcas ocupam
-    apenas uma casa e podem estar nas casas ignoradas por esse padrao.
-            
-    3. PERSEGUICAO
-    Quando uma rajada indicar acertos sem afundar o navio, da prioridade
-    a investigar a zona dessa rajada.
-    Explora casas imediatamente a Norte, Sul, Este e Oeste das
-    possiveis posicoes atingidas.
-    Procura completar uma linha horizontal ou vertical para Caravelas,
-    Naus e Fragatas. Considera tambem a forma em T do Galeao.
-    Se existirem varias explicacoes possiveis, escolhe tiros que ajudem
-    a distinguir essas explicacoes, sem assumir uma delas como certa.
-    
-    4. INTERPRETACAO DOS RESULTADOS
-    Se os tres tiros forem validos e todos forem agua, as tres casas
-    ficam confirmadas como agua.
-    Se houver uma mistura de agua e acertos, conserva a incerteza
-    sobre o resultado de cada casa.
-    Se um navio afundar, nao assumas que os restantes acertos da
-    rajada pertencem necessariamente a esse mesmo navio.
-            
-    5. NAVIOS AFUNDADOS
-    So excluas as casas em redor de um navio afundado quando conseguires
-    determinar todas as suas posicoes com seguranca.
-    Nenhum outro navio pode tocar-lhe, nem na diagonal.
-    Nao excluas automaticamente diagonais de possiveis acertos:
-    essas casas podem pertencer ao proprio Galeao em T.
-    
-    6. FASE FINAL
-    Quando so restarem Barcas, procura nas casas ainda disponiveis
-    que nao estejam confirmadas como agua.
-    Nao continues a perseguir um navio que ja esta confirmado como afundado.
-    Se nao conseguires justificar uma escolha estrategica, escolhe
-    tres casas ainda nao utilizadas em vez de repetir tiros.
+        INFORMACAO RECEBIDA
+
+        Receberas o resultado agregado da rajada, por exemplo:
+        {"validShots":3,"sunkBoats":[{"count":1,"type":"Barca"}],
+         "repeatedShots":0,"outsideShots":0,
+         "hitsOnBoats":[{"hits":1,"type":"Nau"}],"missedShots":1}
+
+        O resultado NAO identifica qual dos tiros acertou em cada navio.
+        A ordem dos elementos em hitsOnBoats e sunkBoats nao corresponde
+        a ordem dos tiros.
+
+        Receberas tambem posicoesAindaNaoAtiradas.
+        Esta lista indica casas ainda nao utilizadas, mas pode incluir
+        casas que ja consegues deduzir que sao agua.
+
+        Se receberes o historico, usa-o como registo das jogadas reais.
+        Se a conversa tiver sido reiniciada, continua a mesma partida:
+        nao recomeces a estrategia como se o tabuleiro estivesse por explorar.
+
+        REGRAS PARA ESCOLHER TIROS
+
+        1. Escolhe tres posicoes distintas de posicoesAindaNaoAtiradas.
+        Nunca repitas uma posicao para confirmar um acerto: disparar outra
+        vez na mesma casa nao fornece informacao nova.
+
+        2. Se a lista tiver apenas uma ou duas posicoes, utiliza TODAS
+        essas posicoes e completa os tres tiros com repeticoes.
+        Esta excecao depende do tamanho da lista, nao do numero de
+        casas que consideras interessantes.
+
+        3. Evita casas que estejam confirmadas como agua.
+        Se nao houver tres opcoes novas que consideres promissoras,
+        prefere outras casas ainda nao utilizadas a repetir tiros antigos.
+
+        4. Investiga navios atingidos que ainda nao foram afundados.
+        Explora vizinhos a Norte, Sul, Este e Oeste dos possiveis acertos.
+        Para Caravelas, Naus e Fragatas, considera linhas retas.
+        Para o Galeao, considera a forma em T.
+
+        5. Distingue certezas de hipoteses.
+        Uma rajada com um acerto e dois tiros na agua nao permite,
+        por si so, identificar qual das tres casas contem o navio.
+        Mantem as varias possibilidades e escolhe tiros que ajudem
+        a distingui-las.
+
+        6. Quando conheceres todas as casas de um navio afundado,
+        exclui as casas adjacentes a esse navio, incluindo diagonais.
+        Nao apliques esta exclusao em redor de uma localizacao incerta.
+        Nao excluas automaticamente diagonais de acertos num navio
+        ainda por identificar: podem pertencer ao proprio Galeao.
+
+        7. Se nao houver um navio por investigar, procura em zonas
+        pouco exploradas onde os navios restantes ainda possam caber.
+        Nao uses exclusivamente um padrao de xadrez, pois as Barcas
+        ocupam apenas uma casa.
+
+        8. Tres tiros proximos podem ajudar a investigar uma zona,
+        mas nao sao um objetivo por si so.
+        Nao percorras linhas ou colunas mecanicamente.
+        Abandona qualquer padrao que inclua tiros repetidos ou agua
+        confirmada, ou que te afaste de um navio por terminar.
+
+        EXEMPLOS DE ENTRADA E RESPOSTA
+
+        Os exemplos seguintes sao ficticios e independentes.
+        NAO fazem parte da partida real.
+        As listas identificadas como excertos mostram apenas algumas
+        das posicoes disponiveis; nao descrevem todo o tabuleiro.
+        As notas explicam os exemplos, mas nao devem aparecer nas tuas respostas.
+        As respostas apresentadas sao escolhas validas, nao necessariamente
+        as unicas escolhas possiveis.
+
+        EXEMPLO 1 — ABANDONAR UM PADRAO PARA NAO REPETIR TIROS
+
+        Entrada:
+        {
+          "posicoesJaJogadas":["H7","H8","H9"],
+          "posicoesAindaNaoAtiradas":["G7","G8","G9","I7","I8","I9"]
+        }
+
+        Nota:
+        Embora G7, H7 e I7 formem uma linha, H7 ja foi utilizado.
+        Escolhe tres casas da lista disponivel, sem repetir.
+
+        Resposta:
+        [{"row":"G","column":7},{"row":"G","column":8},{"row":"I","column":7}]
+
+        EXEMPLO 2 — NAO DISPARAR JUNTO DE UMA NAU AFUNDADA
+
+        Entrada:
+        {
+          "historico":[
+            {
+              "rajada":1,
+              "tiros":[
+                {"row":"E","column":1},
+                {"row":"E","column":2},
+                {"row":"E","column":3}
+              ],
+              "resultado":{
+                "validShots":3,
+                "sunkBoats":[{"count":1,"type":"Nau"}],
+                "repeatedShots":0,
+                "outsideShots":0,
+                "hitsOnBoats":[],
+                "missedShots":0
+              }
+            }
+          ],
+          "excertoPosicoesAindaNaoAtiradas":[
+            "D1","D2","D3","D4","E4","F1","F2","F3","F4",
+            "B6","B8","H7"
+          ]
+        }
+
+        Nota:
+        Nesta primeira rajada, os tres tiros afundaram uma Nau inteira.
+        E1, E2 e E3 sao as suas posicoes.
+        D1-D4, E4 e F1-F4 sao agua por estarem junto da Nau.
+        Nao escolhas F1, F2 e F3 apenas para continuar a percorrer o tabuleiro.
+
+        Resposta:
+        [{"row":"B","column":6},{"row":"B","column":8},{"row":"H","column":7}]
+
+        EXEMPLO 3 — INVESTIGAR UM ACERTO SEM INVENTAR A SUA POSICAO
+
+        Entrada:
+        {
+          "ultimaRajada":[
+            {"row":"E","column":2},
+            {"row":"E","column":5},
+            {"row":"E","column":8}
+          ],
+          "resultado":{
+            "validShots":3,
+            "sunkBoats":[],
+            "repeatedShots":0,
+            "outsideShots":0,
+            "hitsOnBoats":[{"hits":1,"type":"Nau"}],
+            "missedShots":2
+          },
+          "excertoPosicoesAindaNaoAtiradas":[
+            "D2","F2","D5","F5","D8","F8","A1","J10"
+          ]
+        }
+
+        Nota:
+        A Nau pode ter sido atingida em E2, E5 ou E8.
+        Nao ha informacao suficiente para escolher uma dessas casas como certeza.
+        Uma possibilidade e testar um vizinho de cada uma das tres candidatas.
+        Se estes tiros forem agua, isso nao elimina as orientacoes horizontais.
+
+        Resposta:
+        [{"row":"D","column":2},{"row":"D","column":5},{"row":"D","column":8}]
+
+        EXEMPLO 4 — NAO REPETIR SO POR ESTAR NO FIM DO JOGO
+
+        Entrada:
+        {
+          "naviosRestantes":1,
+          "posicoesAindaNaoAtiradas":["A4","A7","B1","J10"]
+        }
+
+        Nota:
+        Ainda existem quatro casas disponiveis.
+        Nao e permitido disparar tres vezes em J10.
+        Escolhe tres casas diferentes, mesmo que reste apenas um navio.
+
+        Resposta:
+        [{"row":"A","column":4},{"row":"B","column":1},{"row":"J","column":10}]
+
+        EXEMPLO 5 — COMPLETAR A RAJADA QUANDO SO RESTAM DUAS CASAS
+
+        Entrada:
+        {
+          "naviosRestantes":1,
+          "posicoesAindaNaoAtiradas":["B1","J10"]
+        }
+
+        Nota:
+        Agora so existem duas casas ainda nao utilizadas.
+        Dispara primeiro em ambas e usa uma repeticao para completar a rajada.
+
+        Resposta:
+        [{"row":"B","column":1},{"row":"J","column":10},{"row":"B","column":1}]
+
+        FIM DOS EXEMPLOS
+
+        Na partida real, usa exclusivamente os dados reais recebidos.
+        Antes de responder, verifica que escolheste exatamente tres tiros,
+        dentro do tabuleiro e sem repeticoes, salvo a excecao indicada.
+        A tua resposta deve conter apenas o array JSON da proxima rajada.
 
 
 ---
