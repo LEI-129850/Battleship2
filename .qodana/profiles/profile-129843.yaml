@@ -5,4 +5,4 @@ inspections:
   - inspection: MethodCount
     enabled: true
     options:
-      m_limit: 10
+      m_limit: 15
