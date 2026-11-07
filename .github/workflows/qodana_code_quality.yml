@@ -1,59 +1,29 @@
-  name: Qodana
+# 129850 - Gonçalo Sobral
+name: Qodana smell gate 129850
 
 on:
-  workflow_dispatch:
   pull_request:
   push:
-    branches:
-      - main
-      - 'releases/*'
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
 
 jobs:
-  qodana:
+  qodana-129850:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-      checks: write
-
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
-
-      - name: Qodana Scan
-        uses: JetBrains/qodana-action@v2025.3
+      - uses: JetBrains/qodana-action@v2026.2
         with:
+          args: --config qodana-129850.yaml
           pr-mode: false
-          args: --save-report
-        env:
-          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN_1371499128 }}
-          QODANA_ENDPOINT: 'https://qodana.cloud'
-
-      - name: Enforce max 5 suspicious-indentation errors
-        run: |
-          SARIF="$RUNNER_TEMP/qodana/results/qodana.sarif.json"
-
-          echo "Looking for SARIF at: $SARIF"
-
-          if [ ! -f "$SARIF" ]; then
-            echo "SARIF report not found at $SARIF"
-            ls -R "$RUNNER_TEMP" || true
-            exit 1
-          fi
-
-          # Count only "Suspicious indentation after control statement without braces"
-          SuspiciousIndentCount=$(jq '[.runs[].results[]
-            | select(.ruleId == "ControlFlowStatementWithoutBraces")
-            | select(.level == "error")]
-            | length' "$SARIF")
-
-          echo "Suspicious indentation errors: $SuspiciousIndentCount"
-
-          if [ "$SuspiciousIndentCount" -gt 5 ]; then
-            echo "❌ Too many suspicious-indentation errors (>5)"
-            exit 1
-          fi
-
-          echo "✔️ Suspicious-indentation threshold satisfied"
+          use-annotations: true
+          post-pr-comment: true
+          upload-result: true
