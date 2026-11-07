@@ -2,7 +2,7 @@
 name: Qodana smell gate 129843
 on:
   push:
-    branches: [main]
+    branches: [smell/large-class-129843]
   pull_request:
   workflow_dispatch:
 
