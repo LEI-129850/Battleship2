@@ -1,0 +1,14 @@
+# 129850 - Gonçalo Sobral
+name: "Long Method gate 129850"
+baseProfile: empty
+inspections:
+  - inspection: NonCommentSourceStatements
+    enabled: true
+    severity: WARNING
+    options:
+      m_limit: 20
+  - inspection: CyclomaticComplexity
+    enabled: true
+    severity: WARNING
+    options:
+      m_limit: 10
