@@ -11,4 +11,4 @@ inspections:
     enabled: true
     severity: WARNING
     options:
-      m_limit: 14
+      m_limit: 10
