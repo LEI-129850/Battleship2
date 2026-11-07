@@ -1,1 +1,9 @@
-
+# 129843 - Martim Correia
+profile:
+  base:
+    name: empty
+  inspections:
+    - inspection: ClassWithTooManyMethods
+      enabled: true
+      options:
+        m_limit: 20
