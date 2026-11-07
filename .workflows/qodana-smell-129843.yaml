@@ -1,9 +1,9 @@
 # 129843 - Martim Correia
 name: Qodana smell gate 129843
 on:
-  pull_request:
   push:
     branches: [main]
+  pull_request:
   workflow_dispatch:
 
 permissions:
@@ -24,4 +24,3 @@ jobs:
           args: --config qodana-129843.yaml
           use-annotations: true
           post-pr-comment: true
-## teste 129843 v2
