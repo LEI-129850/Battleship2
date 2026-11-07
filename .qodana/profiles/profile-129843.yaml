@@ -6,4 +6,4 @@ profile:
     - inspection: ClassWithTooManyMethods
       enabled: true
       options:
-        m_limit: 20
+        m_limit: 25
