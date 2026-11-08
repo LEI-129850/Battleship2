@@ -1,0 +1,30 @@
+# 129834 - Rafael José Capucho da Silva
+name: Checkstyle naming gate 129834
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  checks: write
+
+jobs:
+  checkstyle-129834:
+    name: Checkstyle PackageName 129834
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Verificar nomes de pacotes
+        uses: dbelyaev/action-checkstyle@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          checkstyle_config: checkstyle-129834.xml
+          reporter: github-check
+          level: error
+          fail_level: error
+          filter_mode: nofilter
+          reviewdog_flags: -name=checkstyle-packages-129834
+          exclude: |
+            target
+            .git
