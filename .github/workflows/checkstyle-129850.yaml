@@ -1,0 +1,22 @@
+# 129850 - Gonçalo Sobral
+name: Checkstyle gate 129850
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+  checks: write
+
+jobs:
+  checkstyle-129850:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: dbelyaev/action-checkstyle@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          checkstyle_config: checkstyle-129850.xml
+          reporter: github-pr-check
+          level: error
+          fail_level: error
