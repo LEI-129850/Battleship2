@@ -1,5 +1,5 @@
 # 129834 - Rafael José Capucho da Silva
-name: Qodana smell gate 12345
+name: Qodana smell gate 129834
 
 on:
   pull_request:
