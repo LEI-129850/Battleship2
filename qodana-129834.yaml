@@ -9,4 +9,4 @@ profile:
     path: .qodana/profiles/profile-129834.yaml
 failureConditions:
   severityThresholds:
-    any: 256
+    any: 14

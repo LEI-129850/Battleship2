@@ -1,17 +1,17 @@
 # 129834 Rafael José Capucho da Silva
-profile:
-  base:
-    name: empty
-  inspections:
-    - inspection: MethodCoupling
-      enabled: true
-      options:
-        m_limit: 7
-        m_includeJavaClasses: false
-        m_includeLibraryClasses: false
-    - inspection: ClassCoupling
-      enabled: true
-      options:
-        m_limit: 14
-        m_includeJavaClasses: false
-        m_includeLibraryClasses: false
+name: "Coupling-129834"
+
+baseProfile: empty
+inspections:
+  - inspection: MethodCoupling
+    enabled: true
+    options:
+      m_limit: 7
+      m_includeJavaClasses: false
+      m_includeLibraryClasses: false
+  - inspection: ClassCoupling
+    enabled: true
+    options:
+      m_limit: 14
+      m_includeJavaClasses: false
+      m_includeLibraryClasses: false
