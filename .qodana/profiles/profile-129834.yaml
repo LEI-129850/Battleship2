@@ -1,10 +1,7 @@
-# 129834 - <o teu nome>
-version: "1.0"
-profile:
-  base:
-    name: empty
+# 129834 - <Rafael José Capucho da Silva>
+baseprofile: empty
 
-  inspections:
+inspections:
     - inspection: OverlyCoupledClass
       enabled: true
       options:
