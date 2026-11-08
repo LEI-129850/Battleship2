@@ -1,0 +1,35 @@
+# 129830 - Flavio Santos
+name: Qodana smell gate 129830
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+
+jobs:
+  qodana:
+    name: Qodana Feature Envy 129830
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+
+      - name: Qodana Scan
+        uses: JetBrains/qodana-action@v2026.2.2
+        with:
+          args: --config qodana-129830.yaml --within-docker true
+          use-annotations: true
+          post-pr-comment: true
+          upload-result: true
+          pr-mode: false
+        env:
+          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}

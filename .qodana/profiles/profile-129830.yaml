@@ -1,0 +1,11 @@
+# 129830 - Flavio Santos
+version: "1.0"
+
+profile:
+  base:
+    name: empty
+
+  inspections:
+    - inspection: FeatureEnvy
+      enabled: true
+      severity: WARNING
