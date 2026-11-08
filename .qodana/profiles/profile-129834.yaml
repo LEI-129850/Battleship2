@@ -2,13 +2,7 @@
 profile:
   base:
     name: empty
-  groups:
-    - groupId: TudoDesligado
-      groups:
-        - "ALL"
   inspections:
-    - group: TudoDesligado
-      enabled: false
     - inspection: MethodCoupling
       enabled: true
       options:
