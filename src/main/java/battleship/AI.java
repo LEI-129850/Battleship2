@@ -420,13 +420,5 @@ public class AI {
         }
     }
 
-    /**
-     * Dummy class
-     * @param parametroInvalido
-     */
-
-    void testarCheckstyle(int parametroInvalido) {
-        System.out.println(parametroInvalido);
-    }
 
 }
