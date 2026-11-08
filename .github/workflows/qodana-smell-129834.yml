@@ -1,4 +1,4 @@
-# 129834 - Rafael José Capucho da Silva
+# 129834 Rafael José Capucho da Silva
 name: Qodana smell gate 129834
 
 on:
@@ -13,17 +13,17 @@ permissions:
   pull-requests: write
 
 jobs:
-  qodana-129834:
+  qodana:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           fetch-depth: 0
-      - uses: JetBrains/qodana-action@v2026.2
+
+      - name: Qodana Scan
+        uses: JetBrains/qodana-action@v2026.2
         with:
           args: --config qodana-129834.yaml
-          pr-mode: false       #apenas para o passo 8
-          upload-result: true  # gera o artifact "qodana-report"
           use-annotations: true
           post-pr-comment: true

@@ -1,9 +1,11 @@
-# 129834 - Rafael José Capucho da Silva
+# 129834 Rafael José Capucho da Silva
 version: "1.0"
 linter: jetbrains/qodana-jvm-community:2026.2
 projectJDK: "21"
+disableSanityInspections: true
+runPromoInspections: false
 profile:
-  name: profile-129834
+  path: .qodana/profiles/profile-129834.yaml
 failureConditions:
   severityThresholds:
-    any: 1000
+    any: 0
