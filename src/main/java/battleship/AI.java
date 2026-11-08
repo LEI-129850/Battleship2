@@ -424,7 +424,7 @@ public class AI {
      * Dummy method para testar que o gate funciona
      */
 
-    void method(int a, int b, int c, int d, int e, int f){
+    void method(int a, int b, int c, int d, int e){
         //faz nada
     }
 }
