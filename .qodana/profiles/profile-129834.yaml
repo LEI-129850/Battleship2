@@ -8,13 +8,13 @@ profile:
     - inspection: OverlyCoupledClass
       enabled: true
       options:
-        m_limit: 15
+        m_limit: 8
         m_includeJavaClasses: false
         m_includeLibraryClasses: false
 
     - inspection: OverlyCoupledMethod
       enabled: true
       options:
-        m_limit: 10
+        m_limit: 8
         m_includeJavaClasses: false
         m_includeLibraryClasses: false
