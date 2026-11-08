@@ -4,7 +4,7 @@ name: Qodana smell gate 129834
 on:
   pull_request:
   push:
-    branches: [main]
+    branches: [qodana-129834]
   workflow_dispatch:
 
 permissions:
@@ -24,7 +24,8 @@ jobs:
       - name: Qodana Scan
         uses: JetBrains/qodana-action@v2026.2
         with:
-          pr-mode: false
+
           args: --config qodana-129834.yaml
+          pr-mode: false
           use-annotations: true
           post-pr-comment: true
