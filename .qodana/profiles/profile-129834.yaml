@@ -1,0 +1,20 @@
+# 129834 - <o teu nome>
+version: "1.0"
+profile:
+  base:
+    name: empty
+
+  inspections:
+    - inspection: OverlyCoupledClass
+      enabled: true
+      options:
+        m_limit: 15
+        m_includeJavaClasses: false
+        m_includeLibraryClasses: false
+
+    - inspection: OverlyCoupledMethod
+      enabled: true
+      options:
+        m_limit: 10
+        m_includeJavaClasses: false
+        m_includeLibraryClasses: false
