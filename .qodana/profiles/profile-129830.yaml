@@ -3,7 +3,7 @@ name: "Long Parameter List 129830"
 baseProfile: empty
 
 inspections:
-  - inspection: MethodWithTooManyParameters
+  - inspection: ParametersPerMethod
     enabled: true
     severity: WARNING
     options:
