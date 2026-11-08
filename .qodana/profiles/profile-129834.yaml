@@ -5,16 +5,16 @@ profile:
     name: empty
 
   inspections:
-    - inspection: OverlyCoupledClass
+    - inspection: ClassCoupling
       enabled: true
       options:
-        m_limit: 100
+        m_limit: 15
         m_includeJavaClasses: false
         m_includeLibraryClasses: false
 
-    - inspection: OverlyCoupledMethod
+    - inspection: MethodCoupling
       enabled: true
       options:
-        m_limit: 100
+        m_limit: 10
         m_includeJavaClasses: false
         m_includeLibraryClasses: false
