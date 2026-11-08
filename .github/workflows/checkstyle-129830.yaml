@@ -1,0 +1,26 @@
+# 129830 - Flavio Santos
+name: Checkstyle naming gate 129830
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  checks: write
+
+jobs:
+  checkstyle-129830:
+    name: Checkstyle ParameterName 129830
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: dbelyaev/action-checkstyle@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          checkstyle_config: checkstyle-129830.xml
+          workdir: src/main/java
+          reporter: github-pr-check
+          level: error
+          fail_level: error
+          filter_mode: added

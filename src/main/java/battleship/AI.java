@@ -421,4 +421,8 @@ public class AI {
     }
 
 
+    void testarCheckstyle(int ParametroInvalido) {
+        System.out.println(ParametroInvalido);
+    }
+
 }
