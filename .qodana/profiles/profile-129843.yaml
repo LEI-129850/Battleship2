@@ -1,0 +1,8 @@
+# 129843 - Martim Correia
+name: "Large Class 129843"
+baseProfile: empty
+inspections:
+  - inspection: ClassWithTooManyMethods
+    enabled: true
+    options:
+      m_limit: 20
