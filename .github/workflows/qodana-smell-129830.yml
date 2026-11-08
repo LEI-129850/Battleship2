@@ -1,0 +1,45 @@
+# 129830 - Flavio Santos
+name: Qodana smell gate 129830
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+
+jobs:
+  qodana-129830:
+    name: Qodana Long Parameter List 129830
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+
+      - name: Verificar ficheiro e commit
+        run: |
+          git rev-parse HEAD
+          pwd
+          ls -l qodana-129830.yaml
+          cat qodana-129830.yaml
+
+      - name: Qodana Scan
+        uses: JetBrains/qodana-action@v2026.2.2
+        with:
+          args: >-
+            --config qodana-129830.yaml
+            --profile-path .qodana/profiles/profile-129830.yaml
+            --within-docker true
+            --image jetbrains/qodana-jvm-community:2026.2
+          pr-mode: false
+          use-annotations: true
+          post-pr-comment: true
+          upload-result: true
+

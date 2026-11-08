@@ -1,0 +1,10 @@
+# 129830 - Flavio Santos
+name: "Long Parameter List 129830"
+baseProfile: empty
+
+inspections:
+  - inspection: ParametersPerMethod
+    enabled: true
+    severity: WARNING
+    options:
+      m_limit: 5

@@ -419,4 +419,6 @@ public class AI {
             throw new IOException("A simulação foi interrompida.", e);
         }
     }
+
+
 }
