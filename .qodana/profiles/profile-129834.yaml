@@ -4,10 +4,10 @@ profile:
   base:
     name: empty
   inspections:
-    #- inspection: ClassCoupling
-    #  enabled: true
-    # options:
-    #   m_limit: 15
+    - inspection: ClassCoupling
+      enabled: true
+      options:
+        m_limit: 15
     - inspection: MethodCoupling
       enabled: true
       options:
