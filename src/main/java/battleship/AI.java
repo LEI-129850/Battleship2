@@ -419,4 +419,12 @@ public class AI {
             throw new IOException("A simulação foi interrompida.", e);
         }
     }
+
+    /**
+     * Dummy method para testar que o gate funciona
+     */
+
+    void method(int a, int b, int c, int d, int e, int f){
+        //faz nada
+    }
 }
