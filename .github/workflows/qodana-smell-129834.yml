@@ -13,14 +13,13 @@ permissions:
   pull-requests: write
 
 jobs:
-  qodana:
+  qodana-129834:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
-
       - uses: JetBrains/qodana-action@v2026.2
         with:
           args: --config qodana-129834.yaml
