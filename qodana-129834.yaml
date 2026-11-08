@@ -5,7 +5,8 @@ projectJDK: "21"
 disableSanityInspections: true
 runPromoInspections: false
 profile:
-  path: .qodana/profiles/profile-129834.yaml
+  base:
+    path: .qodana/profiles/profile-129834.yaml
 failureConditions:
   severityThresholds:
     any: 256
