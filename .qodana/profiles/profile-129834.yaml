@@ -1,17 +1,22 @@
-# 129834 - <Rafael José Capucho da Silva>
-baseprofile: empty
-
-inspections:
+# 129834 - Rafael José Capucho da Silva
+version: "1.0"
+profile:
+  base:
+    name: empty
+  inspections:
+    - inspection: ClassCoupling
+      enabled: true
+      options:
+        m_limit: 100
     - inspection: OverlyCoupledClass
       enabled: true
       options:
-        m_limit: 15
-        m_includeJavaClasses: false
-        m_includeLibraryClasses: false
-
+        m_limit: 100
+    - inspection: MethodCoupling
+      enabled: true
+      options:
+        m_limit: 100
     - inspection: OverlyCoupledMethod
       enabled: true
       options:
-        m_limit: 10
-        m_includeJavaClasses: false
-        m_includeLibraryClasses: false
+        m_limit: 100
