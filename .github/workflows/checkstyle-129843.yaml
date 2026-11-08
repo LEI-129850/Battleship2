@@ -1,0 +1,26 @@
+# 129843 - Martim Correia
+name: Checkstyle naming gate 129843
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+
+jobs:
+  checkstyle-129843:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: dbelyaev/action-checkstyle@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          checkstyle_config: checkstyle-129843.xml
+          workdir: src/main/java
+          reporter: github-pr-check
+          level: error
+          fail_level: error
