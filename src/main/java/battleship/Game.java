@@ -588,5 +588,5 @@ public class Game implements IGame
 	}
 
 
-	static void Teste_Erro_Checkstyle() { }
+	static void testeErroCheckstyle() { }
 }
