@@ -7,16 +7,8 @@ profile:
     - inspection: ClassCoupling
       enabled: true
       options:
-        m_limit: 100
+        m_limit: 15
     - inspection: OverlyCoupledClass
       enabled: true
       options:
-        m_limit: 100
-    - inspection: MethodCoupling
-      enabled: true
-      options:
-        m_limit: 100
-    - inspection: OverlyCoupledMethod
-      enabled: true
-      options:
-        m_limit: 100
+        m_limit: 10
