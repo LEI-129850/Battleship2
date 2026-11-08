@@ -586,7 +586,4 @@ public class Game implements IGame
 		}
 		return navios.size();
 	}
-
-
-	static void testeErroCheckstyle() { }
 }
