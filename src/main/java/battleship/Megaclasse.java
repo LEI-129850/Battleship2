@@ -2,8 +2,34 @@ package battleship;
 
 import java.util.ArrayList;
 import java.util.List;
+ class Board {
 
-/** Responsabilidade unica: persistencia do estado e registo de eventos. */
+    public static final int SIZE = 10;
+
+    private final char[][] cells = new char[SIZE][SIZE];
+
+    public Board() {
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                cells[i][j] = '~';
+            }
+        }
+    }
+
+    public boolean isInside(int row, int col) {
+        return row >= 0 && row < SIZE && col >= 0 && col < SIZE;
+    }
+
+    public char cellAt(int row, int col) {
+        return cells[row][col];
+    }
+
+    public void setCell(int row, int col, char value) {
+        if (isInside(row, col)) {
+            cells[row][col] = value;
+        }
+    }
+}/** Responsabilidade unica: persistencia do estado e registo de eventos. */
 public class Megaclasse {
 
     private final List<String> log = new ArrayList<>();
