@@ -29,3 +29,4 @@ jobs:
           pr-mode: false
           use-annotations: true
           post-pr-comment: true
+          upload-result: true
