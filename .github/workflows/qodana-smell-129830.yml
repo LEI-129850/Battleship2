@@ -23,6 +23,13 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           fetch-depth: 0
 
+      - name: Verificar ficheiro e commit
+        run: |
+          git rev-parse HEAD
+          pwd
+          ls -l qodana-129830.yaml
+          cat qodana-129830.yaml
+
       - name: Qodana Scan
         uses: JetBrains/qodana-action@v2026.2.2
         with:
@@ -32,9 +39,3 @@ jobs:
           post-pr-comment: true
           upload-result: true
 
-      - name: Verificar ficheiro e commit
-        run: |
-          git rev-parse HEAD
-          pwd
-          ls -l qodana-129830.yaml
-          cat qodana-129830.yaml
