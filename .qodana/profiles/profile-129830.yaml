@@ -1,11 +1,9 @@
 # 129830 - Flavio Santos
-version: "1.0"
-
 profile:
   base:
     name: empty
-
   inspections:
-    - inspection: FeatureEnvy
+    - inspection: MethodWithTooManyParameters
       enabled: true
-      severity: WARNING
+      options:
+        m_limit: 5
