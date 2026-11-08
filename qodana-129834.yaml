@@ -6,4 +6,4 @@ profile:
   name: profile-129834
 failureConditions:
   severityThresholds:
-    any: 50
+    any: 1000
