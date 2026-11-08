@@ -422,11 +422,11 @@ public class AI {
 
     /**
      * Dummy class
-     * @param ParametroInvalido
+     * @param parametroInvalido
      */
 
-    void testarCheckstyle(int ParametroInvalido) {
-        System.out.println(ParametroInvalido);
+    void testarCheckstyle(int parametroInvalido) {
+        System.out.println(parametroInvalido);
     }
 
 }
