@@ -20,7 +20,6 @@ import java.util.Scanner;
 import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.*;
-
 /**
  * Testes unitários da classe {@link Tasks}.
  * <p>
@@ -36,6 +35,10 @@ import static org.junit.jupiter.api.Assertions.*;
  *   <li>o ramo {@code else if} de {@link Tasks#readClassicPosition(Scanner)}, que é
  *       inalcançável: se o primeiro padrão falha, o segundo também falha.</li>
  * </ul>
+ *
+ * @author Gonçalo Sobral
+ * Date: 18/17/2026
+ *
  */
 @DisplayName("Tasks")
 class TasksTest {
