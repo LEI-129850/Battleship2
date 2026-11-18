@@ -20,6 +20,7 @@ import java.util.Scanner;
 import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * Testes unitários da classe {@link Tasks}.
  * <p>
@@ -38,7 +39,6 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author Gonçalo Sobral
  * Date: 18/17/2026
- *
  */
 @DisplayName("Tasks")
 class TasksTest {
@@ -229,7 +229,7 @@ class TasksTest {
 
 	@Test
 	@DisplayName("readClassicPosition lê o formato compacto (A3)")
-	void readClassicPosition_compacto() {
+	void readClassicPositionCompacto() {
 		IPosition pos = Tasks.readClassicPosition(new Scanner("A3"));
 
 		assertEquals(0, pos.getRow());
@@ -238,7 +238,7 @@ class TasksTest {
 
 	@Test
 	@DisplayName("readClassicPosition lê letra e número separados, em minúsculas (c 5)")
-	void readClassicPosition_comEspacoEMinusculas() {
+	void readClassicPositionComEspacoEMinusculas() {
 		IPosition pos = Tasks.readClassicPosition(new Scanner("c 5"));
 
 		assertEquals(2, pos.getRow());
@@ -247,7 +247,7 @@ class TasksTest {
 
 	@Test
 	@DisplayName("readClassicPosition aceita a última casa do tabuleiro (J10)")
-	void readClassicPosition_ultimaCasa() {
+	void readClassicPositionUltimaCasa() {
 		IPosition pos = Tasks.readClassicPosition(new Scanner("J10"));
 
 		assertEquals(9, pos.getRow());
@@ -257,7 +257,7 @@ class TasksTest {
 
 	@Test
 	@DisplayName("readClassicPosition devolve uma posição fora do tabuleiro (K11)")
-	void readClassicPosition_foraDoTabuleiro() {
+	void readClassicPositionForaDoTabuleiro() {
 		IPosition pos = Tasks.readClassicPosition(new Scanner("K11"));
 
 		assertFalse(pos.isInside());
@@ -265,7 +265,7 @@ class TasksTest {
 
 	@Test
 	@DisplayName("readClassicPosition falha quando não há nada para ler")
-	void readClassicPosition_semTokens() {
+	void readClassicPositionSemTokens() {
 		IllegalArgumentException erro = assertThrows(IllegalArgumentException.class,
 				() -> Tasks.readClassicPosition(new Scanner("")));
 
@@ -274,7 +274,7 @@ class TasksTest {
 
 	@Test
 	@DisplayName("readClassicPosition rejeita formatos inválidos")
-	void readClassicPosition_formatoInvalido() {
+	void readClassicPositionFormatoInvalido() {
 		for (String entrada : new String[]{"3A", "A", "AB 3", "A-3", "33"}) {
 			IllegalArgumentException erro = assertThrows(IllegalArgumentException.class,
 					() -> Tasks.readClassicPosition(new Scanner(entrada)),
@@ -299,7 +299,7 @@ class TasksTest {
 
 	@Test
 	@DisplayName("readPosition falha com entrada não numérica")
-	void readPosition_naoNumerica() {
+	void readPositionNaoNumerica() {
 		assertThrows(InputMismatchException.class,
 				() -> Tasks.readPosition(new Scanner("a b")));
 	}
@@ -317,7 +317,7 @@ class TasksTest {
 
 	@Test
 	@DisplayName("readShip constrói uma barca virada a oeste na posição lida")
-	void readShip_barcaOeste() {
+	void readShipBarcaOeste() {
 		Ship navio = Tasks.readShip(new Scanner("barca 3 4 o"));
 
 		assertNotNull(navio);
@@ -329,7 +329,7 @@ class TasksTest {
 
 	@Test
 	@DisplayName("readShip devolve null para um tipo de navio desconhecido")
-	void readShip_tipoDesconhecido() {
+	void readShipTipoDesconhecido() {
 		assertNull(Tasks.readShip(new Scanner("xpto 0 0 n")));
 	}
 
@@ -353,7 +353,7 @@ class TasksTest {
 
 	@Test
 	@DisplayName("buildFleet ignora navios desconhecidos, em colisão ou fora do tabuleiro")
-	void buildFleet_ignoraNaviosInvalidos() {
+	void buildFleetIgnoraNaviosInvalidos() {
 		List<String> linhas = new ArrayList<>();
 		linhas.add("xpto 0 0 n");        // tipo desconhecido
 		linhas.add(FROTA_VALIDA[0]);     // galeão válido
@@ -373,7 +373,7 @@ class TasksTest {
 
 	@Test
 	@DisplayName("menu mostra a ajuda e despede-se com 'desisto'")
-	void menu_desistirImediatamente() {
+	void menuDesistirImediatamente() {
 		String texto = correrMenu("desisto");
 
 		assertContem(texto, "AJUDA DO MENU");
@@ -382,7 +382,7 @@ class TasksTest {
 
 	@Test
 	@DisplayName("menu volta a mostrar a ajuda com o comando 'ajuda'")
-	void menu_ajuda() {
+	void menuAjuda() {
 		String texto = correrMenu("ajuda", "desisto");
 
 		assertEquals(2, contar(texto, "AJUDA DO MENU"));
@@ -390,7 +390,7 @@ class TasksTest {
 
 	@Test
 	@DisplayName("menu avisa quando o comando é desconhecido")
-	void menu_comandoDesconhecido() {
+	void menuComandoDesconhecido() {
 		String texto = correrMenu("xpto", "desisto");
 
 		assertContem(texto, "Que comando");
@@ -398,7 +398,7 @@ class TasksTest {
 
 	@Test
 	@DisplayName("menu: estado, mapa, tiros e simula sem partida não fazem nada")
-	void menu_comandosSemPartida() {
+	void menuComandosSemPartida() {
 		String texto = correrMenu("estado", "mapa", "tiros", "simula", "desisto");
 
 		assertContem(texto, "Bons ventos!");
@@ -408,7 +408,7 @@ class TasksTest {
 
 	@Test
 	@DisplayName("menu: relogio sem partida pede para criar uma frota")
-	void menu_relogioSemPartida() {
+	void menuRelogioSemPartida() {
 		String texto = correrMenu("relogio", "desisto");
 
 		assertContem(texto, "Usa gerafrota ou lefrota");
@@ -416,7 +416,7 @@ class TasksTest {
 
 	@Test
 	@DisplayName("menu: historico mostra o histórico de partidas")
-	void menu_historico() {
+	void menuHistorico() {
 		String texto = correrMenu("historico", "desisto");
 
 		assertContem(texto, "de Partidas:");
@@ -428,7 +428,7 @@ class TasksTest {
 
 	@Test
 	@DisplayName("menu: gerafrota inicia a partida com o tempo por omissão (15:00)")
-	void menu_gerafrota() {
+	void menuGerafrota() {
 		String texto = correrMenu("gerafrota", "desisto");
 
 		assertContem(texto, "Partida iniciada!");
@@ -438,7 +438,7 @@ class TasksTest {
 
 	@Test
 	@DisplayName("menu: gerafrota duas vezes pára o relógio da partida anterior")
-	void menu_gerafrotaDuasVezes() {
+	void menuGerafrotaDuasVezes() {
 		String texto = correrMenu("gerafrota", "gerafrota", "desisto");
 
 		assertEquals(2, contar(texto, "Partida iniciada!"));
@@ -446,7 +446,7 @@ class TasksTest {
 
 	@Test
 	@DisplayName("menu: lefrota depois de gerafrota substitui a partida")
-	void menu_lefrotaDepoisDeGerafrota() {
+	void menuLefrotaDepoisDeGerafrota() {
 		String[] comandos = new String[2 + FROTA_VALIDA.length + 1];
 		comandos[0] = "gerafrota";
 		comandos[1] = "lefrota";
@@ -460,7 +460,7 @@ class TasksTest {
 
 	@Test
 	@DisplayName("menu: com a frota lida, estado, mapa e tiros mostram o tabuleiro")
-	void menu_estadoMapaETiros() {
+	void menuEstadoMapaETiros() {
 		String texto = correrMenu(sessaoComFrota("estado", "mapa", "tiros"));
 
 		assertContem(texto, "Estado da Frota: 11 a flutuar, 0 afundados!");
@@ -474,7 +474,7 @@ class TasksTest {
 
 	@Test
 	@DisplayName("menu: tempo em minutos aplica-se à partida seguinte")
-	void menu_tempoEmMinutos() {
+	void menuTempoEmMinutos() {
 		String texto = correrMenu("tempo 10", "gerafrota", "desisto");
 
 		assertContem(texto, "Tempo de jogo: 10:00 (aplica-se");
@@ -483,14 +483,14 @@ class TasksTest {
 
 	@Test
 	@DisplayName("menu: tempo em segundos, com 's' minúsculo ou maiúsculo")
-	void menu_tempoEmSegundos() {
+	void menuTempoEmSegundos() {
 		assertContem(correrMenu("tempo 30s", "desisto"), "Tempo de jogo: 00:30");
 		assertContem(correrMenu("tempo 45S", "desisto"), "Tempo de jogo: 00:45");
 	}
 
 	@Test
 	@DisplayName("menu: tempo aceita o limite máximo de 180 minutos")
-	void menu_tempoLimiteMaximo() {
+	void menuTempoLimiteMaximo() {
 		String texto = correrMenu("tempo 180", "desisto");
 
 		assertContem(texto, "Tempo de jogo: 180:00");
@@ -498,7 +498,7 @@ class TasksTest {
 
 	@Test
 	@DisplayName("menu: tempo fora do intervalo é recusado e mantém o tempo anterior")
-	void menu_tempoForaDoIntervalo() {
+	void menuTempoForaDoIntervalo() {
 		for (String valor : new String[]{"0", "-5", "181", "0s", "-3s"}) {
 			String texto = correrMenu("tempo " + valor, "gerafrota", "desisto");
 
@@ -509,7 +509,7 @@ class TasksTest {
 
 	@Test
 	@DisplayName("menu: tempo com formato inválido é recusado")
-	void menu_tempoFormatoInvalido() {
+	void menuTempoFormatoInvalido() {
 		for (String valor : new String[]{"abc", "1.5", "s"}) {
 			String texto = correrMenu("tempo " + valor, "desisto");
 
@@ -523,7 +523,7 @@ class TasksTest {
 
 	@Test
 	@DisplayName("menu: radar sem partida pede para criar uma frota")
-	void menu_radarSemPartida() {
+	void menuRadarSemPartida() {
 		String texto = correrMenu("radar A1", "desisto");
 
 		assertContem(texto, "Primeiro cria uma frota");
@@ -531,7 +531,7 @@ class TasksTest {
 
 	@Test
 	@DisplayName("menu: radar sem indicar a posição mostra um exemplo")
-	void menu_radarSemPosicao() {
+	void menuRadarSemPosicao() {
 		String texto = correrMenu("gerafrota", "radar", "desisto");
 
 		assertContem(texto, "por exemplo: radar C5");
@@ -539,7 +539,7 @@ class TasksTest {
 
 	@Test
 	@DisplayName("menu: radar fora do tabuleiro é recusado")
-	void menu_radarForaDoTabuleiro() {
+	void menuRadarForaDoTabuleiro() {
 		String texto = correrMenu(sessaoComFrota("radar K11"));
 
 		assertContem(texto, "fora do tabuleiro");
@@ -547,7 +547,7 @@ class TasksTest {
 
 	@Test
 	@DisplayName("menu: radar com formato inválido mostra a mensagem de erro")
-	void menu_radarFormatoInvalido() {
+	void menuRadarFormatoInvalido() {
 		String texto = correrMenu(sessaoComFrota("radar 33"));
 
 		assertContem(texto, "Use 'A3', 'A 3' ou similar.");
@@ -555,7 +555,7 @@ class TasksTest {
 
 	@Test
 	@DisplayName("menu: radar numa zona sem navios diz que a zona está limpa")
-	void menu_radarZonaLimpa() {
+	void menuRadarZonaLimpa() {
 		String texto = correrMenu(sessaoComFrota("radar E2"));
 
 		assertContem(texto, "Zona limpa em E2");
@@ -563,7 +563,7 @@ class TasksTest {
 
 	@Test
 	@DisplayName("menu: radar junto de um navio indica quantos foram detetados")
-	void menu_radarDetetaNavio() {
+	void menuRadarDetetaNavio() {
 		// J2 está ao lado da barca em J1 (e não há mais nada na área 3x3)
 		String texto = correrMenu(sessaoComFrota("radar J2"));
 
@@ -572,7 +572,7 @@ class TasksTest {
 
 	@Test
 	@DisplayName("menu: o radar só pode ser usado uma vez por jogo")
-	void menu_radarSegundoUso() {
+	void menuRadarSegundoUso() {
 		String texto = correrMenu(sessaoComFrota("radar J2", "radar A1"));
 
 		assertContem(texto, "Radar utilizado: 1 navio(s)");
@@ -599,7 +599,7 @@ class TasksTest {
 
 	@Test
 	@DisplayName("menu: rajada aceita letra e número separados por espaços")
-	void menu_rajadaComEspacos() {
+	void menuRajadaComEspacos() {
 		String texto = correrMenu(sessaoComFrota("rajada A 1 B 2 C 3"));
 
 		assertCorresponde(texto, "\"validShots\"\\s*:\\s*3");
@@ -607,7 +607,7 @@ class TasksTest {
 
 	@Test
 	@DisplayName("menu: rajada com tiros repetidos e fora do tabuleiro")
-	void menu_rajadaRepetidoEForaDoTabuleiro() {
+	void menuRajadaRepetidoEForaDoTabuleiro() {
 		String texto = correrMenu(sessaoComFrota("rajada A1 A1 K11"));
 
 		assertContem(texto, "repetido");
@@ -618,7 +618,7 @@ class TasksTest {
 
 	@Test
 	@DisplayName("menu: rajada com menos de três posições lança IllegalArgumentException")
-	void menu_rajadaIncompleta() {
+	void menuRajadaIncompleta() {
 		assertThrows(IllegalArgumentException.class,
 				() -> correrMenu("gerafrota", "rajada A1 B2", "desisto"));
 	}
@@ -630,7 +630,7 @@ class TasksTest {
 	@Test
 	@Timeout(15)
 	@DisplayName("menu: com o tempo esgotado, rajada, simula e radar são recusados")
-	void menu_tempoEsgotadoBloqueiaComandos() {
+	void menuTempoEsgotadoBloqueiaComandos() {
 		// O relógio de 1 s acaba durante a pausa de 1,8 s entre as duas fases
 		String texto = correrMenuEmFases(1800,
 				"tempo 1s\ngerafrota\n",
@@ -644,7 +644,7 @@ class TasksTest {
 	@Test
 	@Timeout(15)
 	@DisplayName("menu: relogio mostra o tempo restante a decrescer")
-	void menu_relogioEmDireto() {
+	void menuRelogioEmDireto() {
 		String texto = correrMenuEmFases(1300,
 				"gerafrota\nrelogio\n",
 				"\ndesisto\n");
@@ -656,7 +656,7 @@ class TasksTest {
 	@Test
 	@Timeout(15)
 	@DisplayName("menu: relogio pára sozinho quando o tempo esgota")
-	void menu_relogioAteAoFimDoTempo() {
+	void menuRelogioAteAoFimDoTempo() {
 		String texto = correrMenuEmFases(2500,
 				"tempo 1s\ngerafrota\nrelogio\n",
 				"\ndesisto\n");
