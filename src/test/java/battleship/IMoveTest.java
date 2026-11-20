@@ -153,4 +153,28 @@ class IMoveTest {
         assertEquals("resultado-custom", customMove.processEnemyFire(false), "processEnemyFire deve retornar a mensagem correta");
         assertEquals("CustomMove{42}", customMove.toString(), "toString deve retornar a representação esperada");
     }
+
+    @Test
+    void readMove() {
+    }
+
+    @Test
+    void testToString() {
+    }
+
+    @Test
+    void getNumber() {
+    }
+
+    @Test
+    void getShots() {
+    }
+
+    @Test
+    void getShotResults() {
+    }
+
+    @Test
+    void processEnemyFire() {
+    }
 }
