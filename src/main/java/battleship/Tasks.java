@@ -90,9 +90,7 @@ public class Tasks {
 
                     myFleet = Fleet.createRandom();
                     game = new Game(myFleet, timeBank);
-                    game.printMyBoard(false, true);
-                    System.out.println("Partida iniciada! Tempo de jogo: "
-                            + GameClock.format(timeBank));
+                    announceGameStart(game, timeBank);
                     clockWindow = startDisplay(game, clockWindow);
                     break;
 
@@ -102,9 +100,7 @@ public class Tasks {
 
                     myFleet = buildFleet(in);
                     game = new Game(myFleet, timeBank);
-                    game.printMyBoard(false, true);
-                    System.out.println("Partida iniciada! Tempo de jogo: "
-                            + GameClock.format(timeBank));
+                    announceGameStart(game, timeBank);
                     clockWindow = startDisplay(game, clockWindow);
                     break;
 
@@ -265,6 +261,12 @@ public class Tasks {
             clockWindow.close();
 
         System.out.println(GOODBYE_MESSAGE);
+    }
+
+    private static void announceGameStart(IGame game, Duration timeBank) {
+        game.printMyBoard(false, true);
+        System.out.println("Partida iniciada! Tempo de jogo: "
+                + GameClock.format(timeBank));
     }
 
     private static void runSimulation(IGame game, IFleet myFleet) {
