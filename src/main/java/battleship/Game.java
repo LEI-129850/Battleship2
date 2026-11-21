@@ -6,8 +6,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import org.jspecify.annotations.NonNull;
 
 import java.time.Duration;
-import static org.fusesource.jansi.Ansi.*;
-import static org.fusesource.jansi.Ansi.Color.*;
 import java.util.*;
 
 public class Game implements IGame
@@ -19,16 +17,16 @@ public class Game implements IGame
 	 * shots, and other game elements onto the console. The method also optionally
 	 * displays shot positions and a legend explaining the symbols used on the board.
 	 *
-	 * @param fleet       the fleet of ships to be displayed on the board. Ships are marked
-	 *                    and their positions are shown according to their placement.
-	 * @param moves       the list of moves containing shots. If shot positions are shown,
-	 *                    they will be rendered based on their outcome (hit, miss, etc.).
-	 * @param show_shots  if true, displays the shots taken during the game and marks
-	 *                    their result (hit or miss) on the board.
-	 * @param showLegend  if true, displays an explanatory legend of the symbols used
-	 *                    to represent various elements such as ships, misses, hits, etc.
+	 * @param fleet      the fleet of ships to be displayed on the board. Ships are marked
+	 *                   and their positions are shown according to their placement.
+	 * @param moves      the list of moves containing shots. If shot positions are shown,
+	 *                   they will be rendered based on their outcome (hit, miss, etc.).
+	 * @param showShots  if true, displays the shots taken during the game and marks
+	 *                   their result (hit or miss) on the board.
+	 * @param showLegend if true, displays an explanatory legend of the symbols used
+	 *                   to represent various elements such as ships, misses, hits, etc.
 	 */
-	public static void printBoard(IFleet fleet, List<IMove> moves, boolean show_shots, boolean showLegend) {
+	public static void printBoard(IFleet fleet, List<IMove> moves, boolean showShots, boolean showLegend) {
 
 		assert fleet != null;
 		assert moves != null;
@@ -41,7 +39,7 @@ public class Game implements IGame
 
 		printShips(fleet, map);
 
-		if (show_shots)
+		if (showShots)
 			printBoardShots(moves, map);
 
 		printBoardFrame(map);
@@ -584,9 +582,9 @@ public class Game implements IGame
 
 		radarUsado = true;
 		List<IShip> navios = new ArrayList<>();
-		for (int direcaox = -1; direcaox <= 1; direcaox++) {
+		for (int deltaRow = -1; deltaRow <= 1; deltaRow++) {
 			for (int direcaoy = -1; direcaoy <= 1; direcaoy++) {
-				IPosition p = new Position(atual.getRow() + direcaox, atual.getColumn() + direcaoy);
+				IPosition p = new Position(atual.getRow() + deltaRow, atual.getColumn() + direcaoy);
 				if (!p.isInside())
 					continue;
 				IShip ship = myFleet.shipAt(p);
