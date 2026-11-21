@@ -12,6 +12,8 @@ import java.util.*;
 
 public class Game implements IGame
 {
+	public static final int RADAR_ALREADY_USED = -1;
+
 	/**
 	 * Prints the game board by representing the positions of ships, adjacent tiles,
 	 * shots, and other game elements onto the console. The method also optionally
@@ -578,7 +580,8 @@ public class Game implements IGame
 	@Override
 	public int radar(IPosition atual){
 		if (radarUsado)
-			return -1;
+			return RADAR_ALREADY_USED;
+
 		radarUsado = true;
 		List<IShip> navios = new ArrayList<>();
 		for (int direcaox = -1; direcaox <= 1; direcaox++) {
