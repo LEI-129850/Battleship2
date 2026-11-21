@@ -53,8 +53,6 @@ public class Tasks {
      */
     private static final String RELOGIO = "relogio";
 
-    private static final int MAX_TIME_BANK_MINUTES = 180;
-
     private static final String TIME_UP_MESSAGE =
             "Tempo esgotado: já não é possível fazer jogadas.";
 
@@ -81,7 +79,7 @@ public class Tasks {
 
             switch (command) {
                 case TEMPO:
-                    timeBank = readTimeBank(in, timeBank);
+                    timeBank = GameClock.readTimeBank(in, timeBank);
                     break;
 
                 case GERAFROTA:
@@ -360,46 +358,6 @@ public class Tasks {
                     "(Sem ambiente gráfico: usa o comando relogio)");
 
         return display;
-    }
-
-    /**
-     * Lê o tempo de jogo escolhido pelo utilizador.
-     */
-    private static Duration readTimeBank(
-            Scanner in, Duration current) {
-
-        String arg = in.next().trim().toLowerCase();
-
-        try {
-            Duration d = arg.endsWith("s")
-                    ? Duration.ofSeconds(
-                            Long.parseLong(
-                                    arg.substring(0, arg.length() - 1)))
-                    : Duration.ofMinutes(Long.parseLong(arg));
-
-            Duration maxTimeBank = Duration.ofMinutes(MAX_TIME_BANK_MINUTES);
-
-            if (d.isZero()
-                    || d.isNegative()
-                    || d.compareTo(
-                    maxTimeBank) > 0) {
-
-                System.out.println(
-                        "Tempo inválido. Usa entre 1 segundo e "
-                                + MAX_TIME_BANK_MINUTES + " minutos.");
-                return current;
-            }
-
-            System.out.println(
-                    "Tempo de jogo: " + GameClock.format(d)
-                            + " (aplica-se à próxima partida: gerafrota ou lefrota)");
-            return d;
-
-        } catch (NumberFormatException e) {
-            System.out.println(
-                    "Formato inválido. Exemplos: 'tempo 15' (minutos) ou 'tempo 30s' (segundos).");
-            return current;
-        }
     }
 
     /**
