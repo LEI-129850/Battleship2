@@ -17,6 +17,33 @@
 
 [Feat 129850](https://github.com/LEI-129850/Battleship2/issues/1): [Link do video](https://www.youtube.com/watch?v=e50M9mJP2D0)
 
+## GitHub Actions
+
+Este repositório utiliza GitHub Actions para construir e testar automaticamente o projeto.
+
+### Workflow Java CI with Maven
+
+O ficheiro `.github/workflows/maven.yml` é executado automaticamente em:
+
+- `push` para a branch `main`
+- `pull request` com destino à branch `main`
+
+O workflow usa Java 21 com Maven e executa os seguintes passos:
+
+1. Obtém o código do repositório.
+2. Configura o JDK 21.
+3. Ativa o cache das dependências Maven.
+4. Compila e empacota o projeto com `mvn -B package --file pom.xml`.
+5. Executa os testes JUnit com `mvn -B test`.
+
+Os resultados podem ser consultados em:
+
+- Repositório → **Actions**
+- Workflow **Java CI with Maven**
+- Última execução associada ao commit ou pull request
+
+![Java CI with Maven](https://github.com/LEI-129850/Battleship2/actions/workflows/maven.yml/badge.svg)
+
 ## Prompt da AI
 
 [Video da interação do LLM com o Jogo](https://www.youtube.com/watch?v=M56ckFIpGNE)
@@ -274,7 +301,7 @@ Hits are calculated based on the intersection of the shot vector and the ship's 
 ---
 
 ## 🛠 Technical Stack
-* **Language:** Java 17
+* **Language:** Java 21
 * **Build Tool:** Maven / Gradle
 * **Testing:** JUnit 5
 * **Logging:** Log4j2
@@ -284,7 +311,7 @@ Hits are calculated based on the intersection of the shot vector and the ship's 
 ## 🚀 Installation & Setup
 
 ### Prerequisites
-* JDK 17 or higher
+* JDK 21 or higher
 * Git
 
 ### Step-by-Step
