@@ -367,10 +367,12 @@ public class Tasks {
                                     arg.substring(0, arg.length() - 1)))
                     : Duration.ofMinutes(Long.parseLong(arg));
 
+            Duration maxTimeBank = Duration.ofMinutes(MAX_TIME_BANK_MINUTES);
+
             if (d.isZero()
                     || d.isNegative()
                     || d.compareTo(
-                            Duration.ofMinutes(MAX_TIME_BANK_MINUTES)) > 0) {
+                    maxTimeBank) > 0) {
 
                 System.out.println(
                         "Tempo inválido. Usa entre 1 segundo e "
