@@ -65,7 +65,7 @@ public class Tasks {
 
         IFleet myFleet = null;
         IGame game = null;
-        ClockWindow display = null;
+        ClockWindow clockWindow = null;
         Duration timeBank = Game.DEFAULT_TIME_BANK;
         ScoreboardManager scoreboardManager = new ScoreboardManager();
 
@@ -91,7 +91,7 @@ public class Tasks {
                     game.printMyBoard(false, true);
                     System.out.println("Partida iniciada! Tempo de jogo: "
                             + GameClock.format(timeBank));
-                    display = startDisplay(game, display);
+                    clockWindow = startDisplay(game, clockWindow);
                     break;
 
                 case LEFROTA:
@@ -103,7 +103,7 @@ public class Tasks {
                     game.printMyBoard(false, true);
                     System.out.println("Partida iniciada! Tempo de jogo: "
                             + GameClock.format(timeBank));
-                    display = startDisplay(game, display);
+                    clockWindow = startDisplay(game, clockWindow);
                     break;
 
                 case STATUS:
@@ -145,8 +145,8 @@ public class Tasks {
 
                         if (game.getRemainingShips() == 0) {
                             game.stopClock();
-                            if (display != null)
-                                display.close();
+                            if (clockWindow != null)
+                                clockWindow.close();
                             game.over();
                             int totalRajadas = game.getAlienMoves().size();
                             scoreboardManager.saveGame(totalRajadas, "Frota Afundada! (Rajada)");
@@ -164,9 +164,9 @@ public class Tasks {
 
                         game.stopClock();
 
-                        if (display != null) {
-                            display.close();
-                            display = null;
+                        if (clockWindow != null) {
+                            clockWindow.close();
+                            clockWindow = null;
                         }
 
                         while (game.getRemainingShips() > 0) {
@@ -288,8 +288,8 @@ public class Tasks {
         if (game != null)
             game.stopClock();
 
-        if (display != null)
-            display.close();
+        if (clockWindow != null)
+            clockWindow.close();
 
         System.out.println(GOODBYE_MESSAGE);
     }
