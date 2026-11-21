@@ -351,29 +351,13 @@ class GameClockTest {
     @DisplayName("Deve garantir thread-safety durante chamadas simultâneas aos métodos do relógio")
     void deveGarantirThreadSafetyEmOperacoesConcorrentes() throws InterruptedException {
         GameClock clock = createClock(Duration.ofMillis(200), () -> {});
-        int numThreads = 8;
-        ExecutorService pool = Executors.newFixedThreadPool(numThreads);
+        ExecutorService pool = Executors.newFixedThreadPool(8);
         CountDownLatch startSignal = new CountDownLatch(1);
-        CountDownLatch doneSignal = new CountDownLatch(numThreads);
+        CountDownLatch doneSignal = new CountDownLatch(8);
 
-        for (int i = 0; i < numThreads; i++) {
-            final int id = i;
-            pool.submit(() -> {
-                try {
-                    startSignal.await();
-                    if (id % 2 == 0) {
-                        clock.start();
-                    }
-                    clock.remaining();
-                    clock.isOver();
-                    if (id == numThreads - 1) {
-                        clock.stop();
-                    }
-                } catch (Exception ignored) {
-                } finally {
-                    doneSignal.countDown();
-                }
-            });
+        for (int i = 0; i < 8; i++) {
+            Runnable action = (i == 7) ? clock::stop : clock::start;
+            pool.submit(() -> runConcurrentClockOps(clock, action, startSignal, doneSignal));
         }
 
         startSignal.countDown();
@@ -382,5 +366,19 @@ class GameClockTest {
 
         assertTrue(completed, "Todas as threads concorrentes devem concluir sem bloqueio mútuo");
         assertTrue(clock.isOver(), "O relógio deve estar finalizado após o stop() concorrente");
+    }
+
+    private void runConcurrentClockOps(
+            GameClock clock, Runnable action, CountDownLatch startSignal, CountDownLatch doneSignal) {
+        try {
+            startSignal.await();
+            action.run();
+            clock.remaining();
+            clock.isOver();
+        } catch (InterruptedException ignored) {
+            Thread.currentThread().interrupt();
+        } finally {
+            doneSignal.countDown();
+        }
     }
 }

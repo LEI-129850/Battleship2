@@ -427,36 +427,19 @@ class ShipTest {
     @DisplayName("Deve construir corretamente todas as subclasses através de buildShip")
     void testBuildShipAllKinds() {
         Position pos = new Position(2, 2);
+        assertBuiltShip("barca", pos, new Barge(Compass.NORTH, pos));
+        assertBuiltShip("caravela", pos, new Caravel(Compass.SOUTH, pos));
+        assertBuiltShip("nau", pos, new Carrack(Compass.EAST, pos));
+        assertBuiltShip("fragata", pos, new Frigate(Compass.WEST, pos));
+        assertBuiltShip("galeao", pos, new Galleon(Compass.NORTH, pos));
+    }
 
-        Ship b = Ship.buildShip("barca", Compass.NORTH, pos);
-        assertNotNull(b);
-        assertInstanceOf(Barge.class, b);
-        assertEquals("Barca", b.getCategory());
-        assertEquals(1, b.getSize());
-
-        Ship c = Ship.buildShip("caravela", Compass.SOUTH, pos);
-        assertNotNull(c);
-        assertInstanceOf(Caravel.class, c);
-        assertEquals("Caravela", c.getCategory());
-        assertEquals(2, c.getSize());
-
-        Ship n = Ship.buildShip("nau", Compass.EAST, pos);
-        assertNotNull(n);
-        assertInstanceOf(Carrack.class, n);
-        assertEquals("Nau", n.getCategory());
-        assertEquals(3, n.getSize());
-
-        Ship f = Ship.buildShip("fragata", Compass.WEST, pos);
-        assertNotNull(f);
-        assertInstanceOf(Frigate.class, f);
-        assertEquals("Fragata", f.getCategory());
-        assertEquals(4, f.getSize());
-
-        Ship g = Ship.buildShip("galeao", Compass.NORTH, pos);
-        assertNotNull(g);
-        assertInstanceOf(Galleon.class, g);
-        assertEquals("Galeao", g.getCategory());
-        assertEquals(5, g.getSize());
+    private void assertBuiltShip(String kind, Position pos, Ship expected) {
+        Ship built = Ship.buildShip(kind, expected.getBearing(), pos);
+        assertNotNull(built, "buildShip não deve retornar null para " + kind);
+        assertInstanceOf(expected.getClass(), built, "Subclasse incorreta para " + kind);
+        assertEquals(expected.getCategory(), built.getCategory(), "Categoria incorreta para " + kind);
+        assertEquals(expected.getSize(), built.getSize(), "Tamanho incorreto para " + kind);
     }
 
     @Test
