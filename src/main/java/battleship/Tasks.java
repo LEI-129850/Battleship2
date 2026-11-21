@@ -229,26 +229,7 @@ public class Tasks {
 
                         int encontrados = game.radar(pos);
 
-                        if (encontrados == -1) {
-                            System.out.println(
-                                    ansi().fg(RED)
-                                            .a("[ERRO] Já usaste o radar neste jogo.")
-                                            .reset());
-                        } else if (encontrados == 0) {
-                            System.out.println(
-                                    ansi().fg(BLUE)
-                                            .a("[RADAR] Zona limpa em " + pos
-                                                    + "! Nenhum navio detetado.")
-                                            .reset());
-                        } else {
-                            System.out.println(
-                                    ansi().fg(GREEN)
-                                            .a("[RADAR] Radar utilizado: "
-                                                    + encontrados
-                                                    + " navio(s) na zona à volta de: "
-                                                    + pos)
-                                            .reset());
-                        }
+                        printRadarResult(encontrados, pos);
 
                     } catch (IllegalArgumentException e) {
                         System.out.println(e.getMessage());
@@ -294,6 +275,29 @@ public class Tasks {
             clockWindow.close();
 
         System.out.println(GOODBYE_MESSAGE);
+    }
+
+    private static void printRadarResult(int encontrados, IPosition pos) {
+        if (encontrados == -1) {
+            System.out.println(
+                    ansi().fg(RED)
+                            .a("[ERRO] Já usaste o radar neste jogo.")
+                            .reset());
+        } else if (encontrados == 0) {
+            System.out.println(
+                    ansi().fg(BLUE)
+                            .a("[RADAR] Zona limpa em " + pos
+                                    + "! Nenhum navio detetado.")
+                            .reset());
+        } else {
+            System.out.println(
+                    ansi().fg(GREEN)
+                            .a("[RADAR] Radar utilizado: "
+                                    + encontrados
+                                    + " navio(s) na zona à volta de: "
+                                    + pos)
+                            .reset());
+        }
     }
 
     /**
