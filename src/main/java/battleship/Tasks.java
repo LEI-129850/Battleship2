@@ -171,17 +171,7 @@ public class Tasks {
                             clockWindow = null;
                         }
 
-                        while (game.getRemainingShips() > 0) {
-                            game.randomEnemyFire();
-                            myFleet.printStatus();
-                            game.printMyBoard(true, false);
-
-                            try {
-                                Thread.sleep(SIMULATION_DELAY_MS);
-                            } catch (InterruptedException e) {
-                                Thread.currentThread().interrupt();
-                            }
-                        }
+                        runSimulation(game, myFleet);
 
                         if (game.getRemainingShips() == 0) {
                             game.over();
@@ -275,6 +265,20 @@ public class Tasks {
             clockWindow.close();
 
         System.out.println(GOODBYE_MESSAGE);
+    }
+
+    private static void runSimulation(IGame game, IFleet myFleet) {
+        while (game.getRemainingShips() > 0) {
+            game.randomEnemyFire();
+            myFleet.printStatus();
+            game.printMyBoard(true, false);
+
+            try {
+                Thread.sleep(SIMULATION_DELAY_MS);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
     }
 
     private static void printRadarResult(int encontrados, IPosition pos) {
