@@ -433,23 +433,23 @@ public abstract class Ship implements IShip
     }
 
     protected void initLinearPositions(Compass bearing, IPosition pos) {
-        switch (bearing) {
-            case NORTH:
-                for (int r = 0; r < this.getSize(); r++)
-                    getPositions().add(new Position(pos.getRow() + r, pos.getColumn()));
-                break;
-            case SOUTH:
-                for (int r = 0; r < this.getSize(); r++)
-                    getPositions().add(new Position(pos.getRow() + r, pos.getColumn()));
-                break;
-            case EAST:
-                for (int c = 0; c < this.getSize(); c++)
-                    getPositions().add(new Position(pos.getRow(), pos.getColumn() + c));
-                break;
-            case WEST:
-                for (int c = 0; c < this.getSize(); c++)
-                    getPositions().add(new Position(pos.getRow(), pos.getColumn() + c));
-                break;
-        }
+		switch (bearing) {
+			case NORTH:
+				for (int r = 0; r < this.getSize(); r++)
+					getPositions().add(new Position(pos.getRow() + r, pos.getColumn()));
+				break;
+			case SOUTH:
+				for (int r = 0; r < this.getSize(); r++)
+					getPositions().add(new Position(pos.getRow() + r, pos.getColumn()));
+				break;
+			case EAST:
+				for (int c = 0; c < this.getSize(); c++)
+					getPositions().add(new Position(pos.getRow(), pos.getColumn() + c));
+				break;
+			case WEST:
+				for (int c = 0; c < this.getSize(); c++)
+					getPositions().add(new Position(pos.getRow(), pos.getColumn() + c));
+				break;
+		}
     }
 }
