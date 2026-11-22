@@ -53,10 +53,10 @@ public class Tasks {
      */
     private static final String RELOGIO = "relogio";
 
-    private static final int MAX_TIME_BANK_MINUTES = 180;
-
     private static final String TIME_UP_MESSAGE =
             "Tempo esgotado: já não é possível fazer jogadas.";
+
+    private static final int SIMULATION_DELAY_MS = 3000;
 
     /**
      * This task also tests the fighting element of a round of three shots
@@ -65,7 +65,7 @@ public class Tasks {
 
         IFleet myFleet = null;
         IGame game = null;
-        ClockWindow display = null;
+        ClockWindow clockWindow = null;
         Duration timeBank = Game.DEFAULT_TIME_BANK;
         ScoreboardManager scoreboardManager = new ScoreboardManager();
 
@@ -79,7 +79,7 @@ public class Tasks {
 
             switch (command) {
                 case TEMPO:
-                    timeBank = readTimeBank(in, timeBank);
+                    timeBank = GameClock.readTimeBank(in, timeBank);
                     break;
 
                 case GERAFROTA:
@@ -88,10 +88,8 @@ public class Tasks {
 
                     myFleet = Fleet.createRandom();
                     game = new Game(myFleet, timeBank);
-                    game.printMyBoard(false, true);
-                    System.out.println("Partida iniciada! Tempo de jogo: "
-                            + GameClock.format(timeBank));
-                    display = startDisplay(game, display);
+                    announceGameStart(game, timeBank);
+                    clockWindow = startDisplay(game, clockWindow);
                     break;
 
                 case LEFROTA:
@@ -100,10 +98,8 @@ public class Tasks {
 
                     myFleet = buildFleet(in);
                     game = new Game(myFleet, timeBank);
-                    game.printMyBoard(false, true);
-                    System.out.println("Partida iniciada! Tempo de jogo: "
-                            + GameClock.format(timeBank));
-                    display = startDisplay(game, display);
+                    announceGameStart(game, timeBank);
+                    clockWindow = startDisplay(game, clockWindow);
                     break;
 
                 case STATUS:
@@ -145,8 +141,8 @@ public class Tasks {
 
                         if (game.getRemainingShips() == 0) {
                             game.stopClock();
-                            if (display != null)
-                                display.close();
+                            if (clockWindow != null)
+                                clockWindow.close();
                             game.over();
                             int totalRajadas = game.getAlienMoves().size();
                             scoreboardManager.saveGame(totalRajadas, "Frota Afundada! (Rajada)");
@@ -164,22 +160,12 @@ public class Tasks {
 
                         game.stopClock();
 
-                        if (display != null) {
-                            display.close();
-                            display = null;
+                        if (clockWindow != null) {
+                            clockWindow.close();
+                            clockWindow = null;
                         }
 
-                        while (game.getRemainingShips() > 0) {
-                            game.randomEnemyFire();
-                            myFleet.printStatus();
-                            game.printMyBoard(true, false);
-
-                            try {
-                                Thread.sleep(3000);
-                            } catch (InterruptedException e) {
-                                Thread.currentThread().interrupt();
-                            }
-                        }
+                        runSimulation(game, myFleet);
 
                         if (game.getRemainingShips() == 0) {
                             game.over();
@@ -227,26 +213,7 @@ public class Tasks {
 
                         int encontrados = game.radar(pos);
 
-                        if (encontrados == -1) {
-                            System.out.println(
-                                    ansi().fg(RED)
-                                            .a("[ERRO] Já usaste o radar neste jogo.")
-                                            .reset());
-                        } else if (encontrados == 0) {
-                            System.out.println(
-                                    ansi().fg(BLUE)
-                                            .a("[RADAR] Zona limpa em " + pos
-                                                    + "! Nenhum navio detetado.")
-                                            .reset());
-                        } else {
-                            System.out.println(
-                                    ansi().fg(GREEN)
-                                            .a("[RADAR] Radar utilizado: "
-                                                    + encontrados
-                                                    + " navio(s) na zona à volta de: "
-                                                    + pos)
-                                            .reset());
-                        }
+                        printRadarResult(encontrados, pos);
 
                     } catch (IllegalArgumentException e) {
                         System.out.println(e.getMessage());
@@ -288,10 +255,53 @@ public class Tasks {
         if (game != null)
             game.stopClock();
 
-        if (display != null)
-            display.close();
+        if (clockWindow != null)
+            clockWindow.close();
 
         System.out.println(GOODBYE_MESSAGE);
+    }
+
+    private static void announceGameStart(IGame game, Duration timeBank) {
+        game.printMyBoard(false, true);
+        System.out.println("Partida iniciada! Tempo de jogo: "
+                + GameClock.format(timeBank));
+    }
+
+    private static void runSimulation(IGame game, IFleet myFleet) {
+        while (game.getRemainingShips() > 0) {
+            game.randomEnemyFire();
+            myFleet.printStatus();
+            game.printMyBoard(true, false);
+
+            try {
+                Thread.sleep(SIMULATION_DELAY_MS);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
+
+    private static void printRadarResult(int encontrados, IPosition pos) {
+        if (encontrados == -1) {
+            System.out.println(
+                    ansi().fg(RED)
+                            .a("[ERRO] Já usaste o radar neste jogo.")
+                            .reset());
+        } else if (encontrados == 0) {
+            System.out.println(
+                    ansi().fg(BLUE)
+                            .a("[RADAR] Zona limpa em " + pos
+                                    + "! Nenhum navio detetado.")
+                            .reset());
+        } else {
+            System.out.println(
+                    ansi().fg(GREEN)
+                            .a("[RADAR] Radar utilizado: "
+                                    + encontrados
+                                    + " navio(s) na zona à volta de: "
+                                    + pos)
+                            .reset());
+        }
     }
 
     /**
@@ -348,44 +358,6 @@ public class Tasks {
                     "(Sem ambiente gráfico: usa o comando relogio)");
 
         return display;
-    }
-
-    /**
-     * Lê o tempo de jogo escolhido pelo utilizador.
-     */
-    private static Duration readTimeBank(
-            Scanner in, Duration current) {
-
-        String arg = in.next().trim().toLowerCase();
-
-        try {
-            Duration d = arg.endsWith("s")
-                    ? Duration.ofSeconds(
-                            Long.parseLong(
-                                    arg.substring(0, arg.length() - 1)))
-                    : Duration.ofMinutes(Long.parseLong(arg));
-
-            if (d.isZero()
-                    || d.isNegative()
-                    || d.compareTo(
-                            Duration.ofMinutes(MAX_TIME_BANK_MINUTES)) > 0) {
-
-                System.out.println(
-                        "Tempo inválido. Usa entre 1 segundo e "
-                                + MAX_TIME_BANK_MINUTES + " minutos.");
-                return current;
-            }
-
-            System.out.println(
-                    "Tempo de jogo: " + GameClock.format(d)
-                            + " (aplica-se à próxima partida: gerafrota ou lefrota)");
-            return d;
-
-        } catch (NumberFormatException e) {
-            System.out.println(
-                    "Formato inválido. Exemplos: 'tempo 15' (minutos) ou 'tempo 30s' (segundos).");
-            return current;
-        }
     }
 
     /**
