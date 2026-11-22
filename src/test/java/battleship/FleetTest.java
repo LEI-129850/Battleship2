@@ -375,7 +375,7 @@ class FleetTest {
 	void printAllShips() {
 		fleet.addShip(bargeAt(0, 0));
 
-		fleet.printAllShips();
+		fleet.printShips(fleet.getShips());
 
 		assertTrue(printedOutput().contains("Barca"),
 				"Error: expected all-ship output to include the fleet's barge");
