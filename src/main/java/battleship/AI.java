@@ -17,7 +17,6 @@ public class AI {
     public static final int CONTEXT_RESET_INTERVAL = 10;
     public static final String MODEL_NAME = "gemini-3.5-flash-lite";
 
-
     /**
      * Permite substituir o envio de mensagens do Gemini em testes.
      */
@@ -81,7 +80,6 @@ public class AI {
         throw new IOException("Não foi possível contactar a API.");
     }
 
-
     /**
      * Implementacao real do fornecedor de chats Gemini.
      */
@@ -128,7 +126,6 @@ public class AI {
                 sleeper).execute();
 
     }
-
 
     /**
      * Simula um jogo em que o Gemini dispara rajadas contra a frota do jogo.
