@@ -255,11 +255,4 @@ public class Fleet implements IFleet
 	printShips(getFloatingShips());
     }
 
-	/**
-	 * This operation prints all the ships of a fleet
-	 */
-	void printAllShips()
-    {
-		printShips(ships);
-    }
 }
