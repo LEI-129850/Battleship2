@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * - getFloatingShips(): 3
  * - getSunkShips(): 3
  * - shipAt(IPosition): 3
- * - colisionRisk(IShip): 3 (covered through addShip)
+ * - collisionRisk(IShip): 3 (covered through addShip)
  * - printShips(List<IShip>): 2
  * - printStatus(): 1
  * - printShipsByCategory(String): 1
@@ -382,15 +382,15 @@ class FleetTest {
 	}
 
 	@Test
-	@DisplayName("colisionRisk rejects null when called directly")
-	void colisionRiskAssertion1() throws ReflectiveOperationException {
-		Method collisionRisk = Fleet.class.getDeclaredMethod("colisionRisk", IShip.class);
+	@DisplayName("collisionRisk rejects null when called directly")
+	void collisionRiskAssertion1() throws ReflectiveOperationException {
+		Method collisionRisk = Fleet.class.getDeclaredMethod("collisionRisk", IShip.class);
 		collisionRisk.setAccessible(true);
 
 		InvocationTargetException exception = assertThrows(
 				InvocationTargetException.class,
 				() -> collisionRisk.invoke(fleet, new Object[] { null }),
-				"Error: expected direct colisionRisk(null) invocation to throw through reflection");
+				"Error: expected direct collisionRisk(null) invocation to throw through reflection");
 
 		assertEquals(AssertionError.class, exception.getCause().getClass(),
 				"Error: expected the reflected method's cause to be AssertionError");
