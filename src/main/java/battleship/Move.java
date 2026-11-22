@@ -65,10 +65,8 @@ public class Move implements IMove {
 	@Override
 	public String processEnemyFire(boolean verbose) {
 
-		String jsonString = new EnemyFireProcessor(verbose).invoke();
-
-		// Retornar o JSON
-		return jsonString;
+        // Retornar o JSON
+		return new EnemyFireProcessor(verbose).invoke();
 	}
 
 	private class EnemyFireProcessor {
