@@ -1,5 +1,6 @@
 package battleship;
 
+
 import com.google.genai.Chat;
 import com.google.genai.Client;
 import com.google.genai.types.GenerateContentResponse;
@@ -43,6 +44,7 @@ public class AI {
 
     private static final Sleeper REAL_SLEEPER = Thread::sleep;
 
+
     /**
      * Envia uma mensagem ao chatbot e tenta novamente ate um maximo
      * de 5 vezes, esperando 2 segundos entre tentativas.
@@ -65,11 +67,11 @@ public class AI {
                 return chat.sendMessage(message);
             } catch (Exception e) {
                 System.out.println(
-                        "Tentativa " + attempt + "/" + MAX_RETRIES + " falhou: " + e.getMessage());
+                        "Tentativa " + attempt + "/5 falhou: " + e.getMessage());
 
-                if (attempt == MAX_RETRIES) {
+                if (attempt == 5) {
                     throw new IOException(
-                            "Não foi possível contactar a API após " + MAX_RETRIES +" tentativas.",
+                            "Não foi possível contactar a API após 5 tentativas.",
                             e);
                 }
 
