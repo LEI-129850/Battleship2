@@ -18,7 +18,7 @@ public class Galleon extends Ship {
 	 * @param pos     The initial position of the ship on the game board.
 	 */
 	public Galleon(Compass bearing, IPosition pos) {
-		super("Galeao", bearing, pos, 5);
+		super(new ShipSpecs("Galeao", 5), new ShipPlacement(bearing, pos));
 
 		switch (bearing) {
 			case NORTH:

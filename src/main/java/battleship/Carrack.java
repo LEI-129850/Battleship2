@@ -1,7 +1,5 @@
 package battleship;
 
-import java.util.List;
-
 /**
  * The type Carrack represents a ship with a size of 3 units.
  * It is positioned on the game board based on its bearing and initial position.
@@ -19,7 +17,7 @@ public class Carrack extends Ship {
 	 * @param pos     The initial position of the ship on the game board.
 	 */
 	public Carrack(Compass bearing, IPosition pos) {
-		super("Nau", bearing, pos, 3);
+		super(new ShipSpecs("Nau", 3), new ShipPlacement(bearing, pos));
 
 		initLinearPositions(bearing, pos);
 	}

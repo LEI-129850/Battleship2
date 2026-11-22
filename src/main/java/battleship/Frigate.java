@@ -17,7 +17,7 @@ public class Frigate extends Ship {
 	 * @param pos     The initial position of the ship on the game board.
 	 */
 	public Frigate(Compass bearing, IPosition pos) {
-		super("Fragata", bearing, pos, 4);
+		super(new ShipSpecs("Fragata", 4), new ShipPlacement(bearing, pos));
 
 		initLinearPositions(bearing, pos);
 	}
