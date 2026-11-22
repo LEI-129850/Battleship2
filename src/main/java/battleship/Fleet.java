@@ -5,6 +5,7 @@ package battleship;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * The type Fleet.
@@ -90,13 +91,29 @@ public class Fleet implements IFleet
 		assert s != null;
 
 		boolean result = false;
-		if ((ships.size() <= FLEET_SIZE) && (s.isInsideBoard()) && (!colisionRisk(s)))
+		if ((ships.size() <= FLEET_SIZE) && (s.isInsideBoard()) && (!collisionRisk(s)))
 		{
 			ships.add(s);
 			result = true;
 		}
 		return result;
     }
+
+	/**
+	 *  Dada uma condicao, devolve os navios em ships que a cumprem
+	 * @param condition a condicao que os navios devem cumprir
+	 * @return os Navios que cumprem a condicao
+	 */
+	private List<IShip> filterShips(Predicate<IShip> condition){
+		List<IShip> filteredShips = new ArrayList<>();
+
+		for (IShip ship : ships) {
+			if (condition.test(ship)) {
+				filteredShips.add(ship);
+			}
+		}
+		return filteredShips;
+	}
 
 	/**
 	 * Gets ships like.
@@ -114,12 +131,7 @@ public class Fleet implements IFleet
     {
 		assert category != null;
 
-		List<IShip> shipsLike = new ArrayList<IShip>();
-		for (IShip s : ships)
-			if (s.getCategory().equals(category))
-				shipsLike.add(s);
-
-		return shipsLike;
+		return filterShips(ship -> ship.getCategory().equals(category));
     }
 
 	/**
@@ -135,12 +147,7 @@ public class Fleet implements IFleet
     @Override
     public List<IShip> getFloatingShips()
     {
-		List<IShip> floatingShips = new ArrayList<IShip>();
-		for (IShip s : ships)
-			if (s.stillFloating())
-				floatingShips.add(s);
-
-		return floatingShips;
+		return filterShips(IShip::stillFloating);
     }
 
 	/**
@@ -156,12 +163,7 @@ public class Fleet implements IFleet
 	@Override
 	public List<IShip> getSunkShips()
 	{
-		List<IShip> sunkShips = new ArrayList<IShip>();
-		for (IShip s : ships)
-			if (!s.stillFloating())
-				sunkShips.add(s);
-
-		return sunkShips;
+		return filterShips(ship -> ! ship.stillFloating());
 	}
 
 	/**
@@ -187,12 +189,12 @@ public class Fleet implements IFleet
     }
 
 	/**
-	 * Colision risk boolean.
+	 * Collision risk boolean.
 	 *
 	 * @param s the s
 	 * @return the boolean
 	 */
-	private boolean colisionRisk(IShip s)
+	private boolean collisionRisk(IShip s)
     {
 		assert s != null;
 
@@ -207,13 +209,13 @@ public class Fleet implements IFleet
 	/**
 	 * This operation prints all the given ships
 	 *
-	 * @param ships The list of ships
+	 * @param shipsToPrint The list of ships
 	 */
-	public void printShips(List<IShip> ships)
+	public void printShips(List<IShip> shipsToPrint)
 	{
-		assert ships != null;
+		assert shipsToPrint != null;
 
-		for (IShip ship : ships)
+		for (IShip ship : shipsToPrint)
 			System.out.println(ship);
 	}
 
@@ -253,11 +255,4 @@ public class Fleet implements IFleet
 	printShips(getFloatingShips());
     }
 
-	/**
-	 * This operation prints all the ships of a fleet
-	 */
-	void printAllShips()
-    {
-		printShips(ships);
-    }
 }
