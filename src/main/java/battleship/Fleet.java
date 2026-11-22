@@ -5,6 +5,7 @@ package battleship;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * The type Fleet.
@@ -99,6 +100,22 @@ public class Fleet implements IFleet
     }
 
 	/**
+	 *  Dada uma condicao, devolve os navios em ships que a cumprem
+	 * @param condition a condicao que os navios devem cumprir
+	 * @return os Navios que cumprem a condicao
+	 */
+	private List<IShip> filterShips(Predicate<IShip> condition){
+		List<IShip> filteredShips = new ArrayList<>();
+
+		for (IShip ship : ships) {
+			if (condition.test(ship)) {
+				filteredShips.add(ship);
+			}
+		}
+		return filteredShips;
+	}
+
+	/**
 	 * Gets ships like.
 	 *
 	 * @param category the category
@@ -114,12 +131,7 @@ public class Fleet implements IFleet
     {
 		assert category != null;
 
-		List<IShip> shipsLike = new ArrayList<IShip>();
-		for (IShip s : ships)
-			if (s.getCategory().equals(category))
-				shipsLike.add(s);
-
-		return shipsLike;
+		return filterShips(ship -> ship.getCategory().equals(category));
     }
 
 	/**
@@ -135,12 +147,7 @@ public class Fleet implements IFleet
     @Override
     public List<IShip> getFloatingShips()
     {
-		List<IShip> floatingShips = new ArrayList<IShip>();
-		for (IShip s : ships)
-			if (s.stillFloating())
-				floatingShips.add(s);
-
-		return floatingShips;
+		return filterShips(IShip::stillFloating);
     }
 
 	/**
@@ -156,12 +163,7 @@ public class Fleet implements IFleet
 	@Override
 	public List<IShip> getSunkShips()
 	{
-		List<IShip> sunkShips = new ArrayList<IShip>();
-		for (IShip s : ships)
-			if (!s.stillFloating())
-				sunkShips.add(s);
-
-		return sunkShips;
+		return filterShips(ship -> ! ship.stillFloating());
 	}
 
 	/**
