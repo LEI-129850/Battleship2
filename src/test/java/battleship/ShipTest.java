@@ -23,7 +23,7 @@ class ShipTest {
      */
     static class CustomShip extends Ship {
         CustomShip(String category, Compass bearing, IPosition pos, int size) {
-            super(category, bearing, pos, size);
+            super(new ShipSpecs(category, size), new ShipPlacement(bearing, pos));
         }
 
         void addPos(int row, int col) {

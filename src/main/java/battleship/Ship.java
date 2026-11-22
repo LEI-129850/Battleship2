@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.IntBinaryOperator;
+import java.util.function.ToIntFunction;
 
 /**
  * The type Ship.
@@ -102,21 +104,19 @@ public abstract class Ship implements IShip
 	/**
 	 * Create ships
 	 *
-	 * @param category The category of ships of interest
-	 * @param bearing  The bearing of ships of interest
-	 * @param pos      The position of ships of interest
-	 * @param size		The number of positions occupied by the ship
+	 * @param shipSpecs
+	 * @param shipPlacement
 	 */
-	public Ship(String category, Compass bearing, IPosition pos, int size)
+	public Ship(ShipSpecs shipSpecs, ShipPlacement shipPlacement)
     {
-		this.category = Objects.requireNonNull(category, "Ship's category must not be null");
-		this.bearing = Objects.requireNonNull(bearing, "Ship's bearing must not be null");
-		this.pos = Objects.requireNonNull(pos, "Ship's position must not be null");
+		this.category = Objects.requireNonNull(shipSpecs.category(), "Ship's category must not be null");
+		this.bearing = Objects.requireNonNull(shipPlacement.bearing(), "Ship's bearing must not be null");
+		this.pos = Objects.requireNonNull(shipPlacement.pos(), "Ship's position must not be null");
 	
-		this.category = category;
-		this.bearing = bearing;
-		this.pos = pos;
-		this.size = size;
+		this.category = shipSpecs.category();
+		this.bearing = shipPlacement.bearing();
+		this.pos = shipPlacement.pos();
+		this.size = shipSpecs.size();
 
 		positions = new ArrayList<>();
     }
@@ -229,6 +229,13 @@ public abstract class Ship implements IShip
 	return false;
     }
 
+	private int getExtremeCoords(ToIntFunction<IPosition> axis, IntBinaryOperator comparator) {
+		int extreme = axis.applyAsInt(getPositions().get(0));
+		for (int i = 1; i < getSize(); i++) {
+			extreme = comparator.applyAsInt(extreme, axis.applyAsInt(getPositions().get(i)));
+		}
+		return extreme;
+	}
 	/**
 	 * Gets top most pos.
 	 *
@@ -242,12 +249,10 @@ public abstract class Ship implements IShip
     @Override
     public int getTopMostPos()
     {
-	int top = getPositions().get(0).getRow();
-	for (int i = 1; i < getSize(); i++)
-	    if (getPositions().get(i).getRow() < top)
-		top = getPositions().get(i).getRow();
-	return top;
-    }
+		return getExtremeCoords(IPosition::getRow, Math::min);
+	}
+
+
 
 	/**
 	 * Gets bottom most pos.
@@ -262,11 +267,7 @@ public abstract class Ship implements IShip
     @Override
     public int getBottomMostPos()
     {
-	int bottom = getPositions().get(0).getRow();
-	for (int i = 1; i < getSize(); i++)
-	    if (getPositions().get(i).getRow() > bottom)
-			bottom = getPositions().get(i).getRow();
-	return bottom;
+		return getExtremeCoords(IPosition::getRow, Math::max);
     }
 
 	/**
@@ -282,11 +283,7 @@ public abstract class Ship implements IShip
     @Override
     public int getLeftMostPos()
     {
-	int left = getPositions().get(0).getColumn();
-	for (int i = 1; i < getSize(); i++)
-	    if (getPositions().get(i).getColumn() < left)
-			left = getPositions().get(i).getColumn();
-	return left;
+		return getExtremeCoords(IPosition::getColumn, Math::min);
     }
 
 	/**
@@ -302,11 +299,7 @@ public abstract class Ship implements IShip
     @Override
     public int getRightMostPos()
     {
-	int right = getPositions().get(0).getColumn();
-	for (int i = 1; i < getSize(); i++)
-	    if (getPositions().get(i).getColumn() > right)
-		right = getPositions().get(i).getColumn();
-	return right;
+		return getExtremeCoords(IPosition::getColumn, Math::max);
     }
 
 	/**
@@ -432,4 +425,30 @@ public abstract class Ship implements IShip
 	return "[" + category + " " + bearing + " " + pos + "]";
     }
 
+    protected void initLinearPositions(Compass bearing, IPosition pos) {
+		switch (bearing) {
+			case NORTH:
+				vertical(pos);
+				break;
+			case SOUTH:
+				vertical(pos);
+				break;
+			case EAST:
+				horizontal(pos);
+				break;
+			case WEST:
+				horizontal(pos);
+				break;
+		}
+    }
+
+	private void horizontal(IPosition pos) {
+		for (int c = 0; c < this.getSize(); c++)
+			getPositions().add(new Position(pos.getRow(), pos.getColumn() + c));
+	}
+
+	private void vertical(IPosition pos) {
+		for (int r = 0; r < this.getSize(); r++)
+			getPositions().add(new Position(pos.getRow() + r, pos.getColumn()));
+	}
 }
