@@ -13,3 +13,11 @@
 | `Move::processEnemyFire` | Unnecessary Local Variable (variável jsonString retornada de imediato) | Inline Variable | 129834 |
 | `Ship::getTopMostPos, getBottomMostPos, getLeftMostPos e getRightMostPos` | Duplicated Code (4 ciclos quase iguais, LOC 19) | Extract Method | 129834 |
 | `Ship::Ship` | Long Parameter List (NOPM 4) | Introduce Parameter Object | 129834 |
+|---|---|---|---|
+| `Tasks::menu` | Nome enganador | Rename | 129850 |
+| `Tasks::menu` | Magic Number | Introduce Constant | 129850 |
+| `Tasks::readTimeBank` | Condição complexa | Introduce Variable | 129850 |
+| `Tasks::menu` | Long Method e Switch Statements | Extract Method | 129850 |
+| `Tasks::menu` | Long Method e Switch Statements | Extract Method | 129850 |
+| `Tasks::menu` | Long Method e Duplicated Code | Extract Method | 129850 |
+| `Tasks::readTimeBank` | God Class | Move Members | 129850 |
