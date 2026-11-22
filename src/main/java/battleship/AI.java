@@ -15,6 +15,14 @@ import java.util.List;
  */
 public class AI {
 
+    public static final int MAX_RETRIES = 5;
+    public static final int RETRY_DELAY = 2000;
+    public static final int TIMEOUT = 5000;
+
+    public static final int CONTEXT_RESET_INTERVAL = 10;
+    public static final String MODEL_NAME = "gemini-3.5-flash-lite";
+
+
     /**
      * Permite substituir o envio de mensagens do Gemini em testes.
      */
@@ -279,20 +287,20 @@ public class AI {
             Sleeper sleeper)
             throws IOException, InterruptedException {
 
-        for (int attempt = 1; attempt <= 5; attempt++) {
+        for (int attempt = 1; attempt <= MAX_RETRIES; attempt++) {
             try {
                 return chat.sendMessage(message);
             } catch (Exception e) {
                 System.out.println(
-                        "Tentativa " + attempt + "/5 falhou: " + e.getMessage());
+                        "Tentativa " + attempt + "/" + MAX_RETRIES + " falhou: " + e.getMessage());
 
-                if (attempt == 5) {
+                if (attempt == MAX_RETRIES) {
                     throw new IOException(
-                            "Não foi possível contactar a API após 5 tentativas.",
+                            "Não foi possível contactar a API após " + MAX_RETRIES +" tentativas.",
                             e);
                 }
 
-                sleeper.sleep(2000);
+                sleeper.sleep(RETRY_DELAY);
             }
         }
 
@@ -319,12 +327,12 @@ public class AI {
 
         @Override
         public AIChat createChat() {
-            return wrap(client.chats.create("gemini-3.5-flash-lite"));
+            return wrap(client.chats.create(MODEL_NAME));
         }
 
         @Override
         public AIChat createNewChat() {
-            return wrap(client.chats.create("gemini-3.5-flash-lite"));
+            return wrap(client.chats.create(MODEL_NAME));
         }
 
         private static AIChat wrap(Chat chat) {
@@ -421,7 +429,7 @@ public class AI {
                     break;
                 }
 
-                sleeper.sleep(5000);
+                sleeper.sleep(TIMEOUT);
 
                 // Lembretes com posições disponíveis.
                 var pedido = mapper.createObjectNode();
@@ -429,8 +437,8 @@ public class AI {
                 pedido.put("naviosRestantes", game.getRemainingShips());
                 pedido.set("resultado", mapper.readTree(result));
 
-                // A cada 10 rajadas, relembrar também as regras e o histórico.
-                if (numeroRajada % 10 == 0) {
+                // A cada CONTEXT_RESET_INTERVA rajadas, relembrar também as regras e o histórico.
+                if (numeroRajada % CONTEXT_RESET_INTERVAL == 0) {
                     chat = chatProvider.createNewChat();
 
                     pedido.put("regras", PROMPT);
