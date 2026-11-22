@@ -403,13 +403,14 @@ public class AI {
 
                 IMove move = game.getAlienMoves().getLast();
                 String result = move.processEnemyFire(false);
+                JsonNode resultJson = mapper.readTree(result);
                 numeroRajada++;
 
                 // Guardar a rajada e o resultado real.
                 var registo = mapper.createObjectNode();
                 registo.put("rajada", numeroRajada);
                 registo.set("tiros", tirosJson);
-                registo.set("resultado", mapper.readTree(result));
+                registo.set("resultado", resultJson);
                 historico.add(registo);
 
                 // Atualizar as posições já utilizadas.
@@ -435,7 +436,7 @@ public class AI {
                 var pedido = mapper.createObjectNode();
                 pedido.put("rajadasRealizadas", numeroRajada);
                 pedido.put("naviosRestantes", game.getRemainingShips());
-                pedido.set("resultado", mapper.readTree(result));
+                pedido.set("resultado", resultJson);
 
                 // A cada CONTEXT_RESET_INTERVA rajadas, relembrar também as regras e o histórico.
                 if (numeroRajada % CONTEXT_RESET_INTERVAL == 0) {
