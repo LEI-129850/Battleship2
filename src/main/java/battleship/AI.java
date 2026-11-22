@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.genai.Chat;
 import com.google.genai.Client;
 import com.google.genai.types.GenerateContentResponse;
+import org.jspecify.annotations.NonNull;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -169,13 +170,7 @@ public class AI {
 
                 // Converter o JSON do Gemini em posições do jogo.
                 JsonNode tirosJson = mapper.readTree(responseText);
-                List<IPosition> shots = new ArrayList<>();
-
-                for (JsonNode shot : tirosJson) {
-                    shots.add(new Position(
-                            shot.get("row").asText().charAt(0),
-                            shot.get("column").asInt()));
-                }
+                List<IPosition> shots = convertJsonToPositions(tirosJson);
 
                 // Executar a rajada e obter o resultado.
                 game.fireShots(shots);
@@ -274,6 +269,17 @@ public class AI {
             Thread.currentThread().interrupt();
             throw new IOException("A simulação foi interrompida.", e);
         }
+    }
+
+    private static @NonNull List<IPosition> convertJsonToPositions(JsonNode tirosJson) {
+        List<IPosition> shots = new ArrayList<>();
+
+        for (JsonNode shot : tirosJson) {
+            shots.add(new Position(
+                    shot.get("row").asText().charAt(0),
+                    shot.get("column").asInt()));
+        }
+        return shots;
     }
 
     /**
