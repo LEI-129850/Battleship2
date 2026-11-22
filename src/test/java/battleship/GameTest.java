@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * - validShot: 3
  * - repeatedShot: 2
  * - printBoard: 1
- * - printValidShots: 1
+ * - printValidShots: 1-
  * - printFleet: 1
  */
 public class GameTest {
