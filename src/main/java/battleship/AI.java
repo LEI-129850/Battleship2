@@ -1,15 +1,9 @@
 package battleship;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.genai.Chat;
 import com.google.genai.Client;
 import com.google.genai.types.GenerateContentResponse;
-import org.jspecify.annotations.NonNull;
-
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Permite simular um jogo de batalha naval utilizando o Gemini para escolher os tiros
@@ -87,13 +81,6 @@ public class AI {
         throw new IOException("Não foi possível contactar a API.");
     }
 
-    /**
-     * Versao real de sendWithRetry usada pela aplicacao.
-     */
-    private static String sendWithRetry(AIChat chat, String message)
-            throws IOException, InterruptedException {
-        return sendWithRetry(chat, message, REAL_SLEEPER);
-    }
 
     /**
      * Implementacao real do fornecedor de chats Gemini.
@@ -134,153 +121,14 @@ public class AI {
             Sleeper sleeper)
             throws IOException {
 
-        ObjectMapper mapper = new ObjectMapper();
+        new AISimulation(
+                game,
+                scoreboardManager,
+                chatProvider,
+                sleeper).execute();
 
-        // Memória local da partida.
-        List<JsonNode> historico = new ArrayList<>();
-        List<String> posicoesJogadas = new ArrayList<>();
-        List<String> posicoesDisponiveis = new ArrayList<>();
-        int numeroRajada = 0;
-
-        for (char linha = 'A'; linha <= 'J'; linha++) {
-            for (int coluna = 1; coluna <= 10; coluna++) {
-                posicoesDisponiveis.add("" + linha + coluna);
-            }
-        }
-
-        AIChat chat = chatProvider.createChat();
-        game.printMyBoard(true, true);
-
-        // Regras e todas as posições disponíveis.
-        var inicio = mapper.createObjectNode();
-        inicio.put("regras", AIPrompts.PROMPT);
-        inicio.set(
-                "posicoesAindaNaoAtiradas",
-                mapper.valueToTree(posicoesDisponiveis));
-        inicio.put("instrucao", "Começa agora com a primeira rajada.");
-
-        try {
-            String responseText = sendWithRetry(
-                    chat,
-                    mapper.writeValueAsString(inicio),
-                    sleeper);
-
-            while (game.getRemainingShips() > 0) {
-                System.out.println(responseText);
-
-                // Converter o JSON do Gemini em posições do jogo.
-                JsonNode tirosJson = mapper.readTree(responseText);
-                List<IPosition> shots = convertJsonToPositions(tirosJson);
-
-                // Executar a rajada e obter o resultado.
-                game.fireShots(shots);
-
-                IMove move = game.getAlienMoves().getLast();
-                String result = move.processEnemyFire(false);
-                JsonNode resultJson = mapper.readTree(result);
-                numeroRajada++;
-
-                // Guardar a rajada e o resultado real.
-                var registo = mapper.createObjectNode();
-                registo.put("rajada", numeroRajada);
-                registo.set("tiros", tirosJson);
-                registo.set("resultado", resultJson);
-                historico.add(registo);
-
-                // Atualizar as posições já utilizadas.
-                for (JsonNode shot : tirosJson) {
-                    String posicao = shot.get("row").asText()
-                            + shot.get("column").asInt();
-
-                    if (!posicoesJogadas.contains(posicao)) {
-                        posicoesJogadas.add(posicao);
-                    }
-                }
-
-                posicoesDisponiveis.removeAll(posicoesJogadas);
-                game.printMyBoard(true, true);
-
-                if (game.getRemainingShips() <= 0) {
-                    break;
-                }
-
-                sleeper.sleep(TIMEOUT);
-
-                // Lembretes com posições disponíveis.
-                var pedido = mapper.createObjectNode();
-                pedido.put("rajadasRealizadas", numeroRajada);
-                pedido.put("naviosRestantes", game.getRemainingShips());
-                pedido.set("resultado", resultJson);
-
-                // A cada CONTEXT_RESET_INTERVA rajadas, relembrar também as regras e o histórico.
-                if (numeroRajada % CONTEXT_RESET_INTERVAL == 0) {
-                    chat = chatProvider.createNewChat();
-
-                    pedido.put("regras", AIPrompts.PROMPT);
-
-                    pedido.set(
-                            "historico",
-                            mapper.valueToTree(historico));
-
-                    pedido.set(
-                            "posicoesJaJogadas",
-                            mapper.valueToTree(posicoesJogadas));
-
-                    pedido.put("contexto", """
-            Esta e uma nova conversa para continuar uma partida ja iniciada.
-            O historico contem todas as rajadas executadas e os seus resultados.
-            Essas rajadas ja aconteceram: nao as executes novamente.
-            Usa as regras e o historico para escolher a proxima rajada.
-            """);
-                }
-
-                pedido.set(
-                        "posicoesAindaNaoAtiradas",
-                        mapper.valueToTree(posicoesDisponiveis));
-
-                pedido.put("instrucao", """
-                        Continua esta partida, sem a reiniciar.
-                        Escolhe os próximos 3 tiros EXCLUSIVAMENTE da lista
-                        posicoesAindaNaoAtiradas, sem repetir posições
-                        na mesma rajada.
-                        Se restarem apenas 1 ou 2 posições disponíveis,
-                        dispara em TODAS essas posições e só depois
-                        completa os 3 tiros com posições repetidas.
-                        Os resultados são agregados por rajada: não atribuas
-                        resultados individuais a posições sem evidência.
-                        Responde apenas com o array JSON dos próximos 3 tiros.
-                        """);
-
-                responseText = sendWithRetry(
-                        chat,
-                        mapper.writeValueAsString(pedido),
-                        sleeper);
-            }
-
-            System.out.println(
-                    "Fim da simulação: toda a frota foi afundada.");
-
-            game.over();
-            scoreboardManager.saveGame(
-                    game.getAlienMoves().size(),
-                    "Frota Afundada! (Simulação AI)");
-
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new IOException("A simulação foi interrompida.", e);
-        }
     }
 
-    private static @NonNull List<IPosition> convertJsonToPositions(JsonNode tirosJson) {
-        List<IPosition> shots = new ArrayList<>();
-
-        for (JsonNode shot : tirosJson) {
-            shots.add(new Position(
-                    shot.get("row").asText().charAt(0),
-                    shot.get("column").asInt()));
-        }
-        return shots;
-    }
 
     /**
      * Simula um jogo em que o Gemini dispara rajadas contra a frota do jogo.
