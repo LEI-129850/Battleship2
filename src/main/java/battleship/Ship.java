@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.IntBinaryOperator;
+import java.util.function.ToIntFunction;
 
 /**
  * The type Ship.
@@ -229,6 +231,13 @@ public abstract class Ship implements IShip
 	return false;
     }
 
+	private int getExtremeCoords(ToIntFunction<IPosition> axis, IntBinaryOperator comparator) {
+		int extreme = axis.applyAsInt(getPositions().get(0));
+		for (int i = 1; i < getSize(); i++) {
+			extreme = comparator.applyAsInt(extreme, axis.applyAsInt(getPositions().get(i)));
+		}
+		return extreme;
+	}
 	/**
 	 * Gets top most pos.
 	 *
@@ -242,12 +251,10 @@ public abstract class Ship implements IShip
     @Override
     public int getTopMostPos()
     {
-	int top = getPositions().get(0).getRow();
-	for (int i = 1; i < getSize(); i++)
-	    if (getPositions().get(i).getRow() < top)
-		top = getPositions().get(i).getRow();
-	return top;
-    }
+		return getExtremeCoords(IPosition::getRow, Math::min);
+	}
+
+
 
 	/**
 	 * Gets bottom most pos.
@@ -262,11 +269,7 @@ public abstract class Ship implements IShip
     @Override
     public int getBottomMostPos()
     {
-	int bottom = getPositions().get(0).getRow();
-	for (int i = 1; i < getSize(); i++)
-	    if (getPositions().get(i).getRow() > bottom)
-			bottom = getPositions().get(i).getRow();
-	return bottom;
+		return getExtremeCoords(IPosition::getRow, Math::max);
     }
 
 	/**
@@ -282,11 +285,7 @@ public abstract class Ship implements IShip
     @Override
     public int getLeftMostPos()
     {
-	int left = getPositions().get(0).getColumn();
-	for (int i = 1; i < getSize(); i++)
-	    if (getPositions().get(i).getColumn() < left)
-			left = getPositions().get(i).getColumn();
-	return left;
+		return getExtremeCoords(IPosition::getColumn, Math::min);
     }
 
 	/**
@@ -302,11 +301,7 @@ public abstract class Ship implements IShip
     @Override
     public int getRightMostPos()
     {
-	int right = getPositions().get(0).getColumn();
-	for (int i = 1; i < getSize(); i++)
-	    if (getPositions().get(i).getColumn() > right)
-		right = getPositions().get(i).getColumn();
-	return right;
+		return getExtremeCoords(IPosition::getColumn, Math::max);
     }
 
 	/**
